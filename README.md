@@ -1,0 +1,1 @@
+# My own blog create with django render-template with boostrap
