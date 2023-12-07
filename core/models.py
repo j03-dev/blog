@@ -15,3 +15,10 @@ class Article(models.Model):
 
 class Image(models.Model):
     path = models.ImageField()
+
+
+class Contact(models.Model):
+    name = models.CharField(max_length=255, null=False)
+    email = models.EmailField(null=False)
+    message = models.TextField(null=False)
+    date = models.DateTimeField(auto_now=True)

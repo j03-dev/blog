@@ -1,6 +1,9 @@
+from django.conf import settings
+from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404
 
 from core.models import Article
+from .forms import ContactForm
 
 
 def about(request):
@@ -8,7 +11,16 @@ def about(request):
 
 
 def contact(request):
-    return render(request, "contact.html")
+    message = None
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            message = "success"
+            form.save()
+        else:
+            message = "failed"
+
+    return render(request, "contact.html", {"message": message})
 
 
 def index(request):
