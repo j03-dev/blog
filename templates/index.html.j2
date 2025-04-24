@@ -1,0 +1,12 @@
+{% extends 'layout.html.j2' %}
+
+{% block content %}
+
+{% for article in articles %}
+  <p>{{ article.title }}</p>
+  <p>{{ article.content|safe }}</p>
+  <p>{{ article.author.name }}</p>
+  <p>{{ article.at }}</p>
+{% endfor %}
+
+{% endblock %}

@@ -1,31 +1,21 @@
-from django.shortcuts import render, get_object_or_404
+from oxapy import get, Request, templating
+
+from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import select
 
 from core.models import Article
-from .forms import ContactForm
+from core.serializers import ArticleModelSerializer
 
 
-def about(request):
-    return render(request, "about.html")
-
-
-def contact(request):
-    message = None
-    if request.method == "POST":
-        form = ContactForm(request.POST)
-        if form.is_valid():
-            message = "success"
-            form.save()
-        else:
-            message = "failed"
-
-    return render(request, "contact.html", {"message": message})
-
-
-def index(request):
-    articles = Article.objects.all()
-    return render(request, "index.html", {"all_article": articles})
-
-
-def post(request, pk: int):
-    article = get_object_or_404(Article, id=pk)
-    return render(request, "post.html", {"article": article})
+@get("/")
+def index(request: Request):
+    with Session(request.app_data.engine) as session:
+        stmt = select(Article).options(
+            joinedload(Article.author_relationship),
+            joinedload(Article.images),
+        )
+        articles = session.execute(stmt).unique().scalars().all()
+        serializer = ArticleModelSerializer(instance=articles, many=True)
+        return templating.render(
+            request, "index.html.j2", {"articles": serializer.data}
+        )
