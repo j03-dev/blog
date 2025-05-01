@@ -9,6 +9,10 @@
 </head>
 
 <body>
+  <div hx-get="/nav" hx-trigger="load" hx-swap="outerHTML">
+    Loading nav...
+  </div>
+  <br><br><br>
   <main>
     {% block content %}{% endblock %}
   </main>

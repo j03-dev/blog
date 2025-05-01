@@ -31,6 +31,7 @@ pub_router.routes(
         views.logout,
         views.retrieve_article,
         views.update_article,
+        views.nav,
         static_file("./static", "static"),
     ]
 )
@@ -42,7 +43,6 @@ sec_router.routes(
     [
         views.article,
         views.create_article,
-        views.new_article,
         views.edit_article,
     ]
 )

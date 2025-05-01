@@ -4,10 +4,39 @@ from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import select
 
 from core.models import Article, User
-from core.serializers import (
-    ArticleModelSerializer,
-    ArticleInputSerializer,
-)
+from core.serializers import ArticleModelSerializer
+
+
+@get("/nav")
+def nav(request: Request):
+    req_session = request.session()
+    return templating.render(
+        request,
+        "nav.html",
+        {
+            "is_authenticate": req_session.get("is_authenticate"),
+        },
+    )
+
+
+@get("/")
+def index(request: Request):
+    with Session(request.app_data.engine) as session:
+        stmt = select(Article).options(
+            joinedload(Article.author_relationship),
+            joinedload(Article.images),
+        )
+        articles = session.execute(stmt).unique().scalars().all()
+        serializer = ArticleModelSerializer(instance=articles, many=True)
+        session = request.session()
+        return templating.render(
+            request,
+            "index.html",
+            {
+                "articles": serializer.data,
+                "is_authenticate": session.get("is_authenticate"),
+            },
+        )
 
 
 @get("/login")
@@ -70,30 +99,18 @@ def update_article(request: Request, id: int):
 
 @post("/article")
 def create_article(request: Request):
-    article = ArticleInputSerializer(request)
-
-    try:
-        article.validate()
-    except Exception as e:
-        return str(e), Status.BAD_REQUEST
-
     with Session(request.app_data.engine) as session:
-        new_article = Article(**article.validate_data, author=request.user_id)
+        data = request.json()
+        new_article = (
+            Article(
+                title=data["title"],
+                content=data["content"],
+                author=request.user_id,
+            ),
+        )
         session.add(new_article)
         session.commit()
         return templating.render(request, "article.html", {"message": "success"})
-
-
-@get("/")
-def index(request: Request):
-    with Session(request.app_data.engine) as session:
-        stmt = select(Article).options(
-            joinedload(Article.author_relationship),
-            joinedload(Article.images),
-        )
-        articles = session.execute(stmt).unique().scalars().all()
-        serializer = ArticleModelSerializer(instance=articles, many=True)
-        return templating.render(request, "index.html", {"articles": serializer.data})
 
 
 @post("/logout")
@@ -101,11 +118,6 @@ def logout(request: Request):
     session = request.session()
     session.clear()
     return Redirect("/")
-
-
-@get("/article/new")
-def new_article(request: Request):
-    return templating.render(request, "article_form.html")
 
 
 @get("/article/{id}/edit")
