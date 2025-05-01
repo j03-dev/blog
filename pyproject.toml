@@ -11,3 +11,6 @@ dependencies = [
     "python-dotenv>=1.1.0",
     "sqlalchemy-libsql>=0.1.0",
 ]
+
+[tool.setuptools]
+packages = ["core"]
