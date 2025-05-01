@@ -18,6 +18,11 @@ class ImageModelSerializer(serializer.Serializer):
     path = serializer.CharField()
 
 
+class ArticleInputSerializer(serializer.Serializer):
+    title = serializer.CharField()
+    content = serializer.CharField()
+
+
 class ArticleModelSerializer(serializer.Serializer):
     id = serializer.IntegerField()
     title = serializer.CharField()
@@ -35,3 +40,8 @@ class ArticleModelSerializer(serializer.Serializer):
         data.update(addtional)
 
         return data
+
+
+class CredentialSerializer(serializer.Serializer):
+    email = serializer.EmailField()
+    password = serializer.CharField()

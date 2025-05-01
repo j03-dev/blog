@@ -1,5 +1,10 @@
 run-server:
-  watch: ["./**/*.py", "./**/*.j2"]
+  watch: ["./**/*.py", "./**/*.html"]
   command: |
     source .venv/bin/activate
     python main.py
+
+
+taillwind:
+  command: |
+    npx @tailwindcss/cli -i ./static/css/input.css -o ./static/css/style.css --watch

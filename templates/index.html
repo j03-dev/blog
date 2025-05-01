@@ -1,0 +1,70 @@
+{% extends 'layout.html' %} {% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">
+        Latest Articles
+    </h1>
+
+    <div class="space-y-8">
+        {% if articles %} {% for article in articles %}
+        <div
+            class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300"
+        >
+            <div class="p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                    <a
+                        href="/article/{{ article.id }}"
+                        class="hover:text-gray-600 transition duration-200"
+                        >{{ article.title }}</a
+                    >
+                </h2>
+
+                <div class="flex items-center text-gray-500 text-sm mb-4">
+                    <span>By {{ article.author.name }}</span>
+                    <span class="mx-2">•</span>
+                    <span>{{ article.at }}</span>
+                </div>
+
+                <div class="prose max-w-none mb-4 line-clamp-3 text-gray-700">
+                    {{ article.content|safe }}
+                </div>
+
+                <a
+                    href="/article/{{ article.id }}"
+                    class="inline-block text-gray-800 hover:text-gray-600 font-medium"
+                >
+                    Read more →
+                </a>
+            </div>
+
+            {% if article.images and article.images|length > 0 %}
+            <div class="border-t border-gray-100 p-4 bg-gray-50">
+                <div class="flex space-x-2 overflow-x-auto">
+                    {% for image in article.images %}
+                    <img
+                        src="{{ image.path }}"
+                        alt="Article image"
+                        class="w-20 h-20 object-cover rounded"
+                    />
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %} {% else %}
+        <div class="text-center py-12 bg-white rounded-lg shadow">
+            <p class="text-gray-600">
+                No articles found. Be the first to create one!
+            </p>
+            {% if request.session().get("is_authenticate") %}
+            <a
+                href="/article/new"
+                class="mt-4 inline-block bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-gray-700 transition duration-200"
+            >
+                Create Article
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
