@@ -4,7 +4,8 @@ from oxapy import serializer
 class UserInputSerialier(serializer.Serializer):
     name = serializer.CharField()
     email = serializer.EmailField()
-    password = serializer.CharField(min_length=8, description="minimum length is 8")
+    password = serializer.CharField(
+        min_length=8, description="minimum length is 8")
 
 
 class UserModelSerializer(serializer.Serializer):
@@ -32,12 +33,13 @@ class ArticleModelSerializer(serializer.Serializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
 
-        addtional = {
+        additional = {
             "author": UserModelSerializer(instance=instance.author_relationship).data,
             "images": ImageModelSerializer(instance=instance.images, many=True).data,
-            "at": str(data["at"]),
+            "at": data["at"].strftime("%d %B %Y")
         }
-        data.update(addtional)
+
+        data.update(additional)
 
         return data
 
