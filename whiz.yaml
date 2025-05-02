@@ -1,5 +1,5 @@
 run-server:
-  watch: ["./**/*.py", "./**/*.html"]
+  watch: ["./**/*.py", "./**/*.html.j2"]
   command: |
     source .venv/bin/activate
     python main.py

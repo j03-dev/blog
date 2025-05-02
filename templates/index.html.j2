@@ -1,4 +1,4 @@
-{% extends 'layout.html' %}
+{% extends 'layout.html.j2' %}
 
 {% block content %}
 <div class="max-w-4xl mx-auto">
@@ -40,7 +40,8 @@
       </div>
       {% endif %}
     </div>
-    {% endfor %} {% else %}
+    {% endfor %}
+    {% else %}
     <div class="text-center py-12 bg-white rounded-lg shadow">
       <p class="text-gray-600">
         No articles found. Be the first to create one!

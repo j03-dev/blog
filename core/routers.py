@@ -30,7 +30,6 @@ pub_router.routes(
         views.auth,
         views.logout,
         views.retrieve_article,
-        views.update_article,
         views.nav,
         static_file("./static", "static"),
     ]
@@ -41,8 +40,10 @@ sec_router.middleware(logger)
 sec_router.middleware(protect_page)
 sec_router.routes(
     [
-        views.article,
+        views.form_article,
         views.create_article,
         views.edit_article,
+        views.update_article,
+        views.delete_article
     ]
 )

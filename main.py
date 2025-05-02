@@ -3,10 +3,12 @@ from oxapy import templating
 from core.routers import pub_router, sec_router
 from core.app_data import AppData
 
+from settings import TEMPLATE_DIR
+
 server = HttpServer(("0.0.0.0", 8000))
 server.app_data(AppData())
 server.session_store(SessionStore())
-server.template(templating.Template())
+server.template(templating.Template(TEMPLATE_DIR))
 
 server.attach(pub_router)
 server.attach(sec_router)
