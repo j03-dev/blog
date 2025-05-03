@@ -1,19 +1,18 @@
-<!Doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en" class="bg-neutral-100 text-black font-serif">
 
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Joe's Blog</title>
   <link href="/static/css/style.css" rel="stylesheet">
   <script src="/static/js/htmx.min.js"></script>
   <script src="/static/js/json-enc.js"></script>
 </head>
 
-<body>
-  <div hx-get="/nav" hx-trigger="load" hx-swap="outerHTML">
-    Loading nav...
-  </div>
-  <br><br><br>
-  <main>
+<body class="max-w-4xl mx-auto">
+  <div hx-get="/components/nav" hx-trigger="load"></div>
+  <main class="pt-10 px-4">
     {% block content %}{% endblock %}
   </main>
 </body>

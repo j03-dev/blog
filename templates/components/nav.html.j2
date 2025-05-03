@@ -1,0 +1,25 @@
+<nav class="border-b border-black bg-white text-black font-serif">
+  <div class="flex justify-between items-center py-4 px-2">
+    <a href="/" class="text-xl font-bold uppercase hover:bg-black hover:text-white px-2 transition duration-200">
+      Joe's Blog
+    </a>
+    <ul class="flex space-x-4 text-lg">
+      <li>
+        <a href="/" class="hover:bg-black hover:text-white px-2 transition duration-200">Home</a>
+      </li>
+      <li>
+        <a href="#" class="hover:bg-black hover:text-white px-2 transition duration-200">About</a>
+      </li>
+      {% if is_auth %}
+      <li>
+        <a href="/logout" class="hover:bg-black hover:text-white px-2 transition duration-200">Logout</a>
+        <a href="/articles" class="hover:bg-black hover:text-white px-2 transition duration-200">Create New Article</a>
+      </li>
+      {% else %}
+      <li>
+        <a href="/login" class="hover:bg-black hover:text-white px-2 transition duration-200">Login</a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>

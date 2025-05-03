@@ -7,7 +7,7 @@ import logging
 
 def protect_page(request, next, **kwargs):
     session = request.session()
-    is_auth = session.get("is_authenticate")
+    is_auth = session.get("is_auth")
     user_id = session.get("user_id")
 
     if is_auth:
@@ -25,12 +25,12 @@ pub_router = Router()
 pub_router.middleware(logger)
 pub_router.routes(
     [
-        views.index,
-        views.login,
-        views.auth,
-        views.logout,
-        views.retrieve_article,
         views.nav,
+        views.home,
+        views.login,
+        views.login_form,
+        views.articles,
+        views.get_article,
         static_file("./static", "static"),
     ]
 )
@@ -40,10 +40,10 @@ sec_router.middleware(logger)
 sec_router.middleware(protect_page)
 sec_router.routes(
     [
-        views.form_article,
-        views.create_article,
-        views.edit_article,
+        views.article_form,
+        views.edit_form_article,
         views.update_article,
-        views.delete_article
+        views.create_article,
+        views.delete_article,
     ]
 )
