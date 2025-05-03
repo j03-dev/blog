@@ -3,6 +3,7 @@ from functools import wraps
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import select
 from typing import Optional, Any, Callable, TypeVar, Union
+from urllib.parse import unquote
 
 from core.models import Article, User
 from core.serializers import (
@@ -151,7 +152,7 @@ def delete_article(request: Request, session: Session, id: int):
 @get("/login")
 def login(request: Request):
     query = request.query()
-    message = query.get("message") if query else None
+    message = unquote(query.get("message")) if query else None
     return templating.render(request, "login.html.j2", {"message": message})
 
 
@@ -159,8 +160,11 @@ def login(request: Request):
 @with_session
 def login_form(request: Request, session: Session):
     serializer = CredentialSerializer(request)
-    serializer.validate()
-    req_session = request.session()
+    try:
+        serializer.validate()
+        req_session = request.session()
+    except Exception as e:
+        return Redirect(f"/login?message={e}")
 
     if user := session.query(User).filter_by(**serializer.validate_data).first():
         req_session["user_id"] = user.id
