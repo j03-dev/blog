@@ -81,15 +81,12 @@ def article_form(request: Request):
 @post("/articles")
 @with_session
 def create_article(request: Request, session: Session):
-    try:
-        serializer = ArticleInputSerializer(request)
-        serializer.validate()
-        new_article = Article(**serializer.validate_data, author=request.user_id)
-        session.add(new_article)
-        session.commit()
-        return "Success added"
-    except Exception as e:
-        return str(e)
+    serializer = ArticleInputSerializer(request)
+    serializer.validate()
+    new_article = Article(**serializer.validate_data, author=request.user_id)
+    session.add(new_article)
+    session.commit()
+    return "Success added"
 
 
 @get("/articles/{id}")
@@ -128,16 +125,13 @@ def edit_form_article(request: Request, session: Session, id: int):
 @put("/articles/{id}")
 @with_session
 def update_article(request: Request, session: Session, id: int):
-    try:
-        serializer = ArticleInputSerializer(request)
-        serializer.validate()
-        article = session.query(Article).filter_by(id=id).first()
-        for k, v in serializer.validate_data.items():
-            setattr(article, k, v)
-        session.commit()
-        return "Article Updated"
-    except Exception as e:
-        return str(e)
+    serializer = ArticleInputSerializer(request)
+    serializer.validate()
+    article = session.query(Article).filter_by(id=id).first()
+    for k, v in serializer.validate_data.items():
+        setattr(article, k, v)
+    session.commit()
+    return "Article Updated"
 
 
 @delete("/articles/{id}")
