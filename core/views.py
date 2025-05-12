@@ -82,10 +82,8 @@ def article_form(request: Request):
 @with_session
 def create_article(request: Request, session: Session):
     serializer = ArticleInputSerializer(request)
-    serializer.validate()
-    new_article = Article(**serializer.validate_data, author=request.user_id)
-    session.add(new_article)
-    session.commit()
+    serializer.is_valid()
+    serializer.save(session)
     return "Success added"
 
 
@@ -126,18 +124,16 @@ def edit_form_article(request: Request, session: Session, id: int):
 @with_session
 def update_article(request: Request, session: Session, id: int):
     serializer = ArticleInputSerializer(request)
-    serializer.validate()
-    article = session.query(Article).filter_by(id=id).first()
-    for k, v in serializer.validate_data.items():
-        setattr(article, k, v)
-    session.commit()
+    serializer.is_valid()
+    article = session.query(Article).filter_by(id=id, author=request.user_id).first()
+    serializer.update(article, session)
     return "Article Updated"
 
 
 @delete("/articles/{id}")
 @with_session
 def delete_article(request: Request, session: Session, id: int):
-    article = session.query(Article).filter_by(id=id).first()
+    article = session.query(Article).filter_by(id=id, author=request.user_id).first()
     session.delete(article)
     session.commit()
     return templating.render(request, "article.html.j2")
@@ -155,7 +151,7 @@ def login(request: Request):
 def login_form(request: Request, session: Session):
     serializer = CredentialSerializer(request)
     try:
-        serializer.validate()
+        serializer.is_valid()
         req_session = request.session()
     except Exception as e:
         return Redirect(f"/login?message={e}")

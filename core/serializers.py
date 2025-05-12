@@ -1,11 +1,11 @@
 from oxapy import serializer
+from core.models import Article
 
 
 class UserInputSerialier(serializer.Serializer):
     name = serializer.CharField()
     email = serializer.EmailField()
-    password = serializer.CharField(
-        min_length=8, description="minimum length is 8")
+    password = serializer.CharField(min_length=8, description="minimum length is 8")
 
 
 class UserModelSerializer(serializer.Serializer):
@@ -23,6 +23,14 @@ class ArticleInputSerializer(serializer.Serializer):
     title = serializer.CharField()
     content = serializer.CharField()
 
+    class Meta:
+        model = Article
+
+    def validate(self, attr):
+        attr = super().validate(attr)
+        attr.update({"author": self.request.user_id})
+        return attr
+
 
 class ArticleModelSerializer(serializer.Serializer):
     id = serializer.IntegerField()
@@ -36,7 +44,7 @@ class ArticleModelSerializer(serializer.Serializer):
         additional = {
             "author": UserModelSerializer(instance=instance.author_relationship).data,
             "images": ImageModelSerializer(instance=instance.images, many=True).data,
-            "at": data["at"].strftime("%d %B %Y")
+            "at": data["at"].strftime("%d %B %Y"),
         }
 
         data.update(additional)
