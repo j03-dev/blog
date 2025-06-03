@@ -3,7 +3,6 @@ from functools import wraps
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import select
 from typing import Optional, Any, Callable, TypeVar, Union
-from urllib.parse import unquote
 
 from core.models import Article, User
 from core.serializers import (
@@ -142,7 +141,7 @@ def delete_article(request: Request, session: Session, id: int):
 @get("/login")
 def login(request: Request):
     query = request.query()
-    message = unquote(query.get("message")) if query else None
+    message = query.get("message") if query else None
     return templating.render(request, "login.html.j2", {"message": message})
 
 
