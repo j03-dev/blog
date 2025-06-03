@@ -6,7 +6,7 @@ import logging
 
 
 def protect_page(request, next, **kwargs):
-    session = request.session()
+    session = request.session()  # type: ignore
     is_auth = session.get("is_auth")
     user_id = session.get("user_id")
 

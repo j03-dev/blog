@@ -19,15 +19,15 @@ ResponseType = Union[templating.Template, Status, Redirect]
 def with_session(func: F) -> F:
     @wraps(func)
     def wrapper(request: Request, *args, **kwargs):
-        with Session(request.app_data.engine) as session:
+        with Session(request.app_data.engine) as session:  # type: ignore
             return func(request, session, *args, **kwargs)
 
-    return wrapper
+    return wrapper  # type: ignore
 
 
 def get_article_with_relations(session: Session, article_id: int) -> Optional[Article]:
     stmt = (
-        select(Article)
+        select(Article)  # type: ignore
         .options(
             joinedload(Article.author_relationship),
             joinedload(Article.images),
@@ -53,12 +53,12 @@ def nav(request: Request):
 @get("/components/artciles")
 @with_session
 def articles(request: Request, session: Session):
-    stmt = select(Article).options(
+    stmt = select(Article).options(  # type: ignore
         joinedload(Article.author_relationship),
         joinedload(Article.images),
     )
     articles = session.execute(stmt).unique().scalars().all()
-    serializer = ArticleModelSerializer(instance=articles, many=True)
+    serializer = ArticleModelSerializer(instance=articles, many=True)  # type: ignore
     return templating.render(
         request,
         "components/articles.html.j2",
@@ -81,7 +81,7 @@ def article_form(request: Request):
 @post("/articles")
 @with_session
 def create_article(request: Request, session: Session):
-    serializer = ArticleInputSerializer(request)
+    serializer = ArticleInputSerializer(request)  # type: ignore
     serializer.is_valid()
     serializer.save(session)
     return "Success added"
@@ -93,7 +93,7 @@ def get_article(request: Request, session: Session, id: int):
     req_session = request.session()
     is_auth = req_session.get("is_auth") if req_session else False
     if article := get_article_with_relations(session, id):
-        serializer = ArticleModelSerializer(instance=article)
+        serializer = ArticleModelSerializer(instance=article)  # type: ignore
         return templating.render(
             request,
             "article.html.j2",
@@ -110,7 +110,7 @@ def get_article(request: Request, session: Session, id: int):
 @with_session
 def edit_form_article(request: Request, session: Session, id: int):
     article = get_article_with_relations(session, id)
-    serializer = ArticleModelSerializer(instance=article)
+    serializer = ArticleModelSerializer(instance=article)  # type: ignore
     return templating.render(
         request,
         "article_form.html.j2",
@@ -123,9 +123,9 @@ def edit_form_article(request: Request, session: Session, id: int):
 @put("/articles/{id}")
 @with_session
 def update_article(request: Request, session: Session, id: int):
-    serializer = ArticleInputSerializer(request)
+    serializer = ArticleInputSerializer(request)  # type: ignore
     serializer.is_valid()
-    article = session.query(Article).filter_by(id=id, author=request.user_id).first()
+    article = session.query(Article).filter_by(id=id, author=request.user_id).first()  # type: ignore
     serializer.update(article, session)
     return "Article Updated"
 
@@ -133,7 +133,7 @@ def update_article(request: Request, session: Session, id: int):
 @delete("/articles/{id}")
 @with_session
 def delete_article(request: Request, session: Session, id: int):
-    article = session.query(Article).filter_by(id=id, author=request.user_id).first()
+    article = session.query(Article).filter_by(id=id, author=request.user_id).first()  # type: ignore
     session.delete(article)
     session.commit()
     return templating.render(request, "article.html.j2")
@@ -149,13 +149,13 @@ def login(request: Request):
 @post("/login")
 @with_session
 def login_form(request: Request, session: Session):
-    serializer = CredentialSerializer(request)
+    serializer = CredentialSerializer(request)  # type: ignore
     try:
         serializer.is_valid()
         req_session = request.session()
     except Exception as e:
         return Redirect(f"/login?message={e}")
-
+    # type: ignore
     if user := session.query(User).filter_by(**serializer.validate_data).first():
         req_session["user_id"] = user.id
         req_session["is_auth"] = True
