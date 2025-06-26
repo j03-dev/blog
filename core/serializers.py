@@ -27,8 +27,9 @@ class ArticleInputSerializer(serializer.Serializer):
         model = Article
 
     def validate(self, attr):
+        request = self.context.get("request")
         attr = super().validate(attr)
-        attr.update({"author": self.request.user_id})
+        attr.update({"author": request.user_id})
         return attr
 
 
@@ -42,8 +43,8 @@ class ArticleModelSerializer(serializer.Serializer):
         data = super().to_representation(instance)
 
         additional = {
-            "author": UserModelSerializer(instance=instance.author_relationship).data,
-            "images": ImageModelSerializer(instance=instance.images, many=True).data,
+            "author": UserModelSerializer(instance=instance.author_relationship).data,  # type: ignore
+            "images": ImageModelSerializer(instance=instance.images, many=True).data,  # type: ingore
             "at": data["at"].strftime("%d %B %Y"),
         }
 
