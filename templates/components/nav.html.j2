@@ -48,3 +48,40 @@
     </ul>
   </div>
 </nav>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+    html.setAttribute('data-theme', newTheme);
+    
+    // Update icon visibility
+    const darkIcons = document.querySelectorAll('.dark-icon');
+    const lightIcons = document.querySelectorAll('.light-icon');
+    
+    darkIcons.forEach(icon => {
+      icon.classList.toggle('hidden', newTheme === 'dark');
+    });
+    
+    lightIcons.forEach(icon => {
+      icon.classList.toggle('hidden', newTheme === 'light');
+    });
+  }
+  
+  // Initialize icon state
+  document.addEventListener('DOMContentLoaded', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const darkIcons = document.querySelectorAll('.dark-icon');
+    const lightIcons = document.querySelectorAll('.light-icon');
+    
+    darkIcons.forEach(icon => {
+      icon.classList.toggle('hidden', currentTheme === 'dark');
+    });
+    
+    lightIcons.forEach(icon => {
+      icon.classList.toggle('hidden', currentTheme === 'light');
+    });
+  });
+</script>
