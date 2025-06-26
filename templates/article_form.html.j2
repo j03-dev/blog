@@ -9,7 +9,7 @@
 
     <div id="response" class="mb-4 text-sm italic text-error"></div>
 
-    <form {% if article %} hx-put="/articles/{{ article.id }}" {% else %} hx-post="/articles" {% endif %}
+    <form method="post" {% if article %} hx-put="/articles/{{ article.id }}" {% else %} hx-post="/articles" {% endif %}
       hx-ext="json-enc" hx-target="#response" class="space-y-6" onsubmit="submitContent(event)">
       <div>
         <label for="title" class="block text-sm font-medium mb-2">Title</label>
@@ -22,24 +22,19 @@
 
         <!-- DaisyUI Toolbar -->
         <div class="flex flex-wrap gap-2 mb-3">
-          <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('bold')" title="Bold"
-            aria-label="Bold"><b>B</b></button>
-
-          <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('italic')" title="Italic"
-            aria-label="Italic"><i>I</i></button>
-
-          <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('underline')" title="Underline"
-            aria-label="Underline"><u>U</u></button>
-
+          <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('bold')" title="Bold"><b>B</b></button>
+          <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('italic')"
+            title="Italic"><i>I</i></button>
+          <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('underline')"
+            title="Underline"><u>U</u></button>
           <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('insertOrderedList')"
-            title="Numbered List" aria-label="Numbered List">1.</button>
-
+            title="Numbered List">1.</button>
           <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('insertUnorderedList')"
-            title="Bullet List" aria-label="Bullet List">•</button>
-
+            title="Bullet List">•</button>
           <button type="button" class="btn btn-sm btn-outline"
-            onclick="execCmd('createLink', prompt('Enter URL:', 'https://'))" title="Insert Link"
-            aria-label="Insert Link">🔗</button>
+            onclick="execCmd('createLink', prompt('Enter URL:', 'https://'))" title="Insert Link">
+            🔗
+          </button>
         </div>
 
         <!-- Editable content area -->
@@ -71,11 +66,11 @@
   }
 
   function submitContent(event) {
-    event.preventDefault();
+    // Don't prevent HTMX from submitting the form
     const editor = document.getElementById('editor');
     const textarea = document.getElementById('content');
     textarea.value = editor.innerHTML;
-    event.target.submit();
+    // Let HTMX handle the actual submission
   }
 </script>
 {% endblock %}
