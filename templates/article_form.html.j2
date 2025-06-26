@@ -1,63 +1,68 @@
 {% extends 'layout.html.j2' %}
 
 {% block content %}
-<div class="font-serif bg-white p-8 w-full min-h-screen text-black">
-  <h1 class="text-2xl mb-6">
-    {% if article %} Edit the Article {% else %} Create a New Article {% endif %}
-  </h1>
+<section class="min-h-screen bg-base-100 text-base-content font-sans px-6 py-10">
+  <div class="bg-white border border-neutral rounded-lg shadow-md p-10">
+    <h1 class="text-3xl font-bold text-primary mb-6">
+      {% if article %} Edit Article {% else %} Create New Article {% endif %}
+    </h1>
 
-  <div id="response" class="mb-4 text-sm italic text-error"></div>
+    <div id="response" class="mb-4 text-sm italic text-error"></div>
 
-  <form {% if article %} hx-put="/articles/{{ article.id }}" {% else %} hx-post="/articles" {% endif %}
-    hx-ext="json-enc" hx-target="#response" class="space-y-6" onsubmit="submitContent(event)">
-    <div>
-      <label for="title" class="block text-sm mb-1">Title</label>
-      <input type="text" id="title" name="title" required value="{{ article.title if article else '' }}"
-        class="input input-bordered w-full" />
-    </div>
-
-    <div>
-      <label class="block text-sm mb-2">Content</label>
-
-      <!-- DaisyUI Toolbar -->
-      <div class="flex flex-wrap gap-2 mb-3">
-        <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('bold')" title="Bold"
-          aria-label="Bold"><b>B</b></button>
-
-        <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('italic')" title="Italic"
-          aria-label="Italic"><i>I</i></button>
-
-        <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('underline')" title="Underline"
-          aria-label="Underline"><u>U</u></button>
-
-        <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('insertOrderedList')"
-          title="Numbered List" aria-label="Numbered List">1.</button>
-
-        <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('insertUnorderedList')"
-          title="Bullet List" aria-label="Bullet List">•</button>
-
-        <button type="button" class="btn btn-sm btn-outline"
-          onclick="execCmd('createLink', prompt('Enter URL:', 'https://'))" title="Insert Link"
-          aria-label="Insert Link">🔗</button>
+    <form {% if article %} hx-put="/articles/{{ article.id }}" {% else %} hx-post="/articles" {% endif %}
+      hx-ext="json-enc" hx-target="#response" class="space-y-6" onsubmit="submitContent(event)">
+      <div>
+        <label for="title" class="block text-sm font-medium mb-2">Title</label>
+        <input type="text" id="title" name="title" required value="{{ article.title if article else '' }}"
+          class="input input-bordered w-full" />
       </div>
 
-      <!-- Editable content area -->
-      <div id="editor" contenteditable="true"
-        class="border border-base-300 rounded-lg p-4 min-h-[60vh] prose max-w-full overflow-auto bg-base-100 text-base-content">
-        {{ article.content|safe if article else '' }}
+      <div>
+        <label class="block text-sm font-medium mb-2">Content</label>
+
+        <!-- DaisyUI Toolbar -->
+        <div class="flex flex-wrap gap-2 mb-3">
+          <button type="button" class="btn btn-sm btn-outline btn-neutral" onclick="execCmd('bold')" title="Bold"
+            aria-label="Bold"><b>B</b></button>
+
+          <button type="button" class="btn btn-sm btn-outline btn-neutral" onclick="execCmd('italic')" title="Italic"
+            aria-label="Italic"><i>I</i></button>
+
+          <button type="button" class="btn btn-sm btn-outline btn-neutral" onclick="execCmd('underline')" title="Underline"
+            aria-label="Underline"><u>U</u></button>
+
+          <button type="button" class="btn btn-sm btn-outline btn-neutral" onclick="execCmd('insertOrderedList')"
+            title="Numbered List" aria-label="Numbered List">1.</button>
+
+          <button type="button" class="btn btn-sm btn-outline btn-neutral" onclick="execCmd('insertUnorderedList')"
+            title="Bullet List" aria-label="Bullet List">•</button>
+
+          <button type="button" class="btn btn-sm btn-outline btn-neutral"
+            onclick="execCmd('createLink', prompt('Enter URL:', 'https://'))" title="Insert Link"
+            aria-label="Insert Link">🔗</button>
+        </div>
+
+        <!-- Editable content area -->
+        <div id="editor" contenteditable="true"
+          class="border border-base-300 rounded-lg p-4 min-h-[60vh] prose max-w-full overflow-auto bg-base-100 text-base-content">
+          {{ article.content|safe if article else '' }}
+        </div>
+
+        <!-- Hidden textarea for submission -->
+        <textarea id="content" name="content" class="hidden"></textarea>
       </div>
 
-      <!-- Hidden textarea for submission -->
-      <textarea id="content" name="content" class="hidden"></textarea>
-    </div>
-
-    <div>
-      <button type="submit" class="btn btn-primary w-full uppercase tracking-wide">
-        {% if article %} Edit {% else %} Publish {% endif %}
-      </button>
-    </div>
-  </form>
-</div>
+      <div class="mt-8">
+        <button type="submit" class="btn btn-primary uppercase tracking-wide">
+          {% if article %} Save Changes {% else %} Publish Article {% endif %}
+        </button>
+        <a href="/" class="btn btn-link text-sm uppercase tracking-wide no-underline hover:underline ml-2">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</section>
 
 <script>
   function execCmd(command, value = null) {
