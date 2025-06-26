@@ -2,34 +2,32 @@
 
 {% block content %}
 {% if article %}
-<article class="font-serif text-black bg-white border border-black p-8 max-w-3xl mx-auto">
-  <h1 class="text-4xl mb-4">{{ article.title }}</h1>
+<article class="min-h-screen bg-base-100 text-base-content font-sans px-6 py-10">
+  <div class="bg-white border border-neutral rounded-lg shadow-md p-10">
+    <h1 class="text-5xl font-extrabold text-primary mb-6">{{ article.title }}</h1>
 
-  <p class="text-sm text-gray-600 italic mb-6">
-    {{ article.at }} — by <span class="underline">{{ article.author.name }}</span>
-  </p>
+    <p class="text-sm text-neutral-content italic mb-8">
+      {{ article.at }} — by <span class="underline">{{ article.author.name }}</span>
+    </p>
 
-  <div class="prose prose-sm max-w-none">
-    {{ article.content|safe }}
-  </div>
+    <div class="prose max-w-none prose-lg mb-12">
+      {{ article.content|safe }}
+    </div>
 
-  {% if is_auth %}
-  <div class="flex items-center gap-4 mt-10">
-    <a href="/articles/{{ article.id }}/edit"
-      class="uppercase text-sm border border-black px-3 py-1 hover:bg-black hover:text-white transition">
-      ✏️ Edit
-    </a>
-    <form hx-delete="/articles/{{ article.id }}" hx-target="body" hx-confirm="Are you sure?" method="POST">
-      <button type="submit"
-        class="uppercase text-sm border border-red-500 text-red-500 px-3 py-1 hover:bg-red-500 hover:text-white transition">
-        🗑️ Delete
-      </button>
-    </form>
-  </div>
-  {% endif %}
+    {% if is_auth %}
+    <div class="flex flex-wrap items-center gap-4 mb-10">
+      <a href="/articles/{{ article.id }}/edit" class="btn btn-outline btn-primary btn-sm">
+        ✏️ Edit
+      </a>
+      <form hx-delete="/articles/{{ article.id }}" hx-target="body" hx-confirm="Are you sure?" method="POST">
+        <button type="submit" class="btn btn-outline btn-error btn-sm">
+          🗑️ Delete
+        </button>
+      </form>
+    </div>
+    {% endif %}
 
-  <div class="mt-10">
-    <a href="/" class="uppercase text-sm underline hover:bg-black hover:text-white px-2 py-1 transition">
+    <a href="/" class="btn btn-link text-sm uppercase tracking-wide no-underline hover:underline">
       ← Back to Articles
     </a>
   </div>

@@ -1,23 +1,28 @@
-<nav class="border-b border-black bg-white text-black font-serif">
-  <div class="flex justify-between items-center py-4 px-2">
-    <a href="/" class="text-xl font-bold uppercase hover:bg-black hover:text-white px-2 transition duration-200">
+<nav class="navbar bg-base-100 shadow-md font-sans px-6">
+  <div class="flex-1 navbar-start pr-10">
+    <a href="/"
+      class="text-2xl font-extrabold tracking-wide text-primary hover:text-accent transition-all duration-200">
       Joe's Blog
     </a>
-    <ul class="flex space-x-4 text-lg">
+  </div>
+  <div class="flex-none navbar-end">
+    <ul class="menu menu-horizontal gap-3 text-base font-medium">
       <li>
-        <a href="/" class="hover:bg-black hover:text-white px-2 transition duration-200">Home</a>
+        <a class="hover:bg-primary hover:text-white px-4 py-2 rounded-lg transition" href="/">Home</a>
       </li>
       <li>
-        <a href="#" class="hover:bg-black hover:text-white px-2 transition duration-200">About</a>
+        <a class="hover:bg-primary hover:text-white px-4 py-2 rounded-lg transition" href="#">About</a>
       </li>
       {% if is_auth %}
       <li>
-        <a href="/logout" class="hover:bg-black hover:text-white px-2 transition duration-200">Logout</a>
-        <a href="/articles" class="hover:bg-black hover:text-white px-2 transition duration-200">Create New Article</a>
+        <a class="hover:bg-primary hover:text-white px-4 py-2 rounded-lg transition" href="/articles">New Article</a>
+      </li>
+      <li>
+        <a class="hover:bg-error hover:text-white px-4 py-2 rounded-lg transition" href="/logout">Logout</a>
       </li>
       {% else %}
       <li>
-        <a href="/login" class="hover:bg-black hover:text-white px-2 transition duration-200">Login</a>
+        <a class="hover:bg-primary hover:text-white px-4 py-2 rounded-lg transition" href="/login">Login</a>
       </li>
       {% endif %}
     </ul>

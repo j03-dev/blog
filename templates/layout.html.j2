@@ -10,9 +10,9 @@
   <script src="/static/js/json-enc.js"></script>
 </head>
 
-<body class="max-w-4xl mx-auto">
+<body>
   <div hx-get="/components/nav" hx-trigger="load"></div>
-  <main class="pt-10 px-4">
+  <main>
     {% block content %}{% endblock %}
   </main>
 </body>

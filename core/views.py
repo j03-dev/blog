@@ -80,7 +80,7 @@ def article_form(request: Request):
 @post("/articles")
 @with_session
 def create_article(request: Request, session: Session):
-    serializer = ArticleInputSerializer(request)  # type: ignore
+    serializer = ArticleInputSerializer(request.data)  # type: ignore
     serializer.is_valid()
     serializer.save(session)
     return "Success added"
@@ -122,7 +122,7 @@ def edit_form_article(request: Request, session: Session, id: int):
 @put("/articles/{id}")
 @with_session
 def update_article(request: Request, session: Session, id: int):
-    serializer = ArticleInputSerializer(request)  # type: ignore
+    serializer = ArticleInputSerializer(request.data)  # type: ignore
     serializer.is_valid()
     article = session.query(Article).filter_by(id=id, author=request.user_id).first()  # type: ignore
     serializer.update(article, session)
@@ -148,7 +148,7 @@ def login(request: Request):
 @post("/login")
 @with_session
 def login_form(request: Request, session: Session):
-    serializer = CredentialSerializer(request)  # type: ignore
+    serializer = CredentialSerializer(request.data)  # type: ignore
     try:
         serializer.is_valid()
         req_session = request.session()

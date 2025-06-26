@@ -1,19 +1,21 @@
 {% if articles %}
-<div class="space-y-8 font-serif text-black">
-  {% for article in articles %}
-  <article class="border border-black bg-white px-6 py-4">
-    <h2 class="text-2xl mb-1">{{ article.title }}</h2>
-    <p class="text-sm text-gray-600 italic mb-1">
-      {{ article.at }} — by <span class="underline">{{ article.author.name }}</span>
-    </p>
-    <div class="prose max-w-none line-clamp-3 mb-4">
-      {{ article.content|safe }}
-    </div>
-    <a href="/articles/{{ article.id }}"
-      class="uppercase text-sm underline hover:bg-black hover:text-white transition-colors duration-200 px-2 py-1">
-      Read More →
-    </a>
-  </article>
-  {% endfor %}
-</div>
+<section class="min-h-screen bg-base-100 py-12 px-4 md:px-12 lg:px-24 font-sans text-base-content">
+  <div class="space-y-10">
+    {% for article in articles %}
+    <article class="bg-white border border-neutral rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300">
+      <h2 class="text-3xl font-bold text-primary mb-2">{{ article.title }}</h2>
+      <p class="text-sm text-neutral-content italic mb-3">
+        {{ article.at }} — by <span class="underline">{{ article.author.name }}</span>
+      </p>
+      <div class="prose max-w-none line-clamp-4 mb-5">
+        {{ article.content|safe }}
+      </div>
+      <a href="/articles/{{ article.id }}"
+        class="btn btn-sm btn-outline btn-primary uppercase tracking-wide">
+        Read More →
+      </a>
+    </article>
+    {% endfor %}
+  </div>
+</section>
 {% endif %}

@@ -1,66 +1,76 @@
 {% extends 'layout.html.j2' %}
 
 {% block content %}
-
-
-<script src="https://cdn.tiny.cloud/1/x8y9mg0udgtkz50vjrepmnquvsnz6cvj6ucl5g7acb4jla2h/tinymce/7/tinymce.min.js"
-  referrerpolicy="origin">
-  </script>
-
-<div class="font-serif text-black bg-white border border-black p-8 max-w-3xl mx-auto">
+<div class="font-serif bg-white p-8 w-full min-h-screen text-black">
   <h1 class="text-2xl mb-6">
     {% if article %} Edit the Article {% else %} Create a New Article {% endif %}
   </h1>
 
-  <div id="response" class="mb-4 text-sm italic text-red-600"></div>
+  <div id="response" class="mb-4 text-sm italic text-error"></div>
 
   <form {% if article %} hx-put="/articles/{{ article.id }}" {% else %} hx-post="/articles" {% endif %}
-    hx-ext="json-enc" hx-target="#response" class="space-y-6">
+    hx-ext="json-enc" hx-target="#response" class="space-y-6" onsubmit="submitContent(event)">
     <div>
       <label for="title" class="block text-sm mb-1">Title</label>
-      <input type="text" id="title" name="title" required
-        class="w-full px-4 py-2 border border-black bg-white text-black rounded"
-        value="{{ article.title if article else '' }}">
+      <input type="text" id="title" name="title" required value="{{ article.title if article else '' }}"
+        class="input input-bordered w-full" />
     </div>
 
     <div>
-      <label for="content" class="block text-sm mb-1">Content</label>
-      {# <textarea id="content" name="content"
-        class="w-full px-4 py-2 border border-black bg-white text-black rounded h-40">
-        {{ article.content if article else '' }}
-      </textarea> #}
+      <label class="block text-sm mb-2">Content</label>
 
-      <textarea id="content" name="content">
-        {{ article.content if article else '' }}
-      </textarea>
+      <!-- DaisyUI Toolbar -->
+      <div class="flex flex-wrap gap-2 mb-3">
+        <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('bold')" title="Bold"
+          aria-label="Bold"><b>B</b></button>
+
+        <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('italic')" title="Italic"
+          aria-label="Italic"><i>I</i></button>
+
+        <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('underline')" title="Underline"
+          aria-label="Underline"><u>U</u></button>
+
+        <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('insertOrderedList')"
+          title="Numbered List" aria-label="Numbered List">1.</button>
+
+        <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('insertUnorderedList')"
+          title="Bullet List" aria-label="Bullet List">•</button>
+
+        <button type="button" class="btn btn-sm btn-outline"
+          onclick="execCmd('createLink', prompt('Enter URL:', 'https://'))" title="Insert Link"
+          aria-label="Insert Link">🔗</button>
+      </div>
+
+      <!-- Editable content area -->
+      <div id="editor" contenteditable="true"
+        class="border border-base-300 rounded-lg p-4 min-h-[60vh] prose max-w-full overflow-auto bg-base-100 text-base-content">
+        {{ article.content|safe if article else '' }}
+      </div>
+
+      <!-- Hidden textarea for submission -->
+      <textarea id="content" name="content" class="hidden"></textarea>
     </div>
 
     <div>
-      <button type="submit"
-        class="uppercase text-sm border border-black px-4 py-2 hover:bg-black hover:text-white transition">
+      <button type="submit" class="btn btn-primary w-full uppercase tracking-wide">
         {% if article %} Edit {% else %} Publish {% endif %}
       </button>
     </div>
   </form>
 </div>
 
-
 <script>
-  tinymce.init({
-    selector: 'textarea',
-    plugins: [
-      'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
-      'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown', 'importword', 'exportword', 'exportpdf'
-    ],
-    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-    tinycomments_mode: 'embedded',
-    tinycomments_author: 'Author name',
-    mergetags_list: [
-      {value: 'First.Name', title: 'First Name'},
-      {value: 'Email', title: 'Email'},
-    ],
-    ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
-  });
-</script>
+  function execCmd(command, value = null) {
+    document.execCommand(command, false, value);
+    document.getElementById('editor').focus();
+  }
 
+  function submitContent(event) {
+    event.preventDefault();
+    const editor = document.getElementById('editor');
+    const textarea = document.getElementById('content');
+    textarea.value = editor.innerHTML;
+    event.target.submit();
+  }
+</script>
 {% endblock %}
