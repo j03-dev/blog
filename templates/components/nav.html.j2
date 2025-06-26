@@ -1,4 +1,4 @@
-<nav class="navbar bg-base-100 shadow-md font-sans px-6">
+<nav class="navbar bg-base-100 shadow-md font-sans px-6 border-b border-base-300">
   <div class="flex-1 navbar-start pr-10">
     <a href="/"
       class="text-2xl font-extrabold tracking-wide text-primary hover:text-accent transition-all duration-200">
@@ -8,23 +8,70 @@
   <div class="flex-none navbar-end">
     <ul class="menu menu-horizontal gap-3 text-base font-medium">
       <li>
-        <a class="hover:bg-primary hover:text-white px-4 py-2 rounded-lg transition" href="/">Home</a>
+        <a class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition" href="/">Home</a>
       </li>
       <li>
-        <a class="hover:bg-primary hover:text-white px-4 py-2 rounded-lg transition" href="#">About</a>
+        <a class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition" href="#">About</a>
       </li>
       {% if is_auth %}
       <li>
-        <a class="hover:bg-primary hover:text-white px-4 py-2 rounded-lg transition" href="/articles">New Article</a>
+        <a class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition" href="/articles">New Article</a>
       </li>
       <li>
-        <a class="hover:bg-error hover:text-white px-4 py-2 rounded-lg transition" href="/logout">Logout</a>
+        <a class="hover:bg-error hover:text-base-100 px-4 py-2 rounded-lg transition" href="/logout">Logout</a>
       </li>
       {% else %}
       <li>
-        <a class="hover:bg-primary hover:text-white px-4 py-2 rounded-lg transition" href="/login">Login</a>
+        <a class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition" href="/login">Login</a>
       </li>
       {% endif %}
+      <li>
+        <button onclick="toggleTheme()" class="btn btn-ghost btn-circle">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 dark-icon">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 light-icon hidden">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+          </svg>
+        </button>
+      </li>
     </ul>
   </div>
 </nav>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+    html.setAttribute('data-theme', newTheme);
+    
+    // Update icon visibility
+    const darkIcons = document.querySelectorAll('.dark-icon');
+    const lightIcons = document.querySelectorAll('.light-icon');
+    
+    darkIcons.forEach(icon => {
+      icon.classList.toggle('hidden', newTheme === 'dark');
+    });
+    
+    lightIcons.forEach(icon => {
+      icon.classList.toggle('hidden', newTheme === 'light');
+    });
+  }
+  
+  // Initialize icon state
+  document.addEventListener('DOMContentLoaded', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const darkIcons = document.querySelectorAll('.dark-icon');
+    const lightIcons = document.querySelectorAll('.light-icon');
+    
+    darkIcons.forEach(icon => {
+      icon.classList.toggle('hidden', currentTheme === 'dark');
+    });
+    
+    lightIcons.forEach(icon => {
+      icon.classList.toggle('hidden', currentTheme === 'light');
+    });
+  });
+</script>

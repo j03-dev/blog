@@ -3,14 +3,14 @@
 {% block content %}
 {% if article %}
 <article class="min-h-screen bg-base-100 text-base-content font-sans px-6 py-10">
-  <div class="bg-white border border-neutral rounded-lg shadow-md p-10">
+  <div class="bg-base-100 border border-base-300 rounded-lg shadow-md p-10">
     <h1 class="text-5xl font-extrabold text-primary mb-6">{{ article.title }}</h1>
 
-    <p class="text-sm text-neutral-content italic mb-8">
+    <p class="text-sm text-base-content/70 italic mb-8">
       {{ article.at }} — by <span class="underline">{{ article.author.name }}</span>
     </p>
 
-    <div class="prose max-w-none prose-lg mb-12">
+    <div class="prose max-w-none prose-lg mb-12 prose-headings:text-primary prose-a:text-secondary">
       {{ article.content|safe }}
     </div>
 

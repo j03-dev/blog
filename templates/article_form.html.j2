@@ -2,7 +2,7 @@
 
 {% block content %}
 <section class="min-h-screen bg-base-100 text-base-content font-sans px-6 py-10">
-  <div class="bg-white border border-neutral rounded-lg shadow-md p-10">
+  <div class="bg-base-100 border border-base-300 rounded-lg shadow-md p-10">
     <h1 class="text-3xl font-bold text-primary mb-6">
       {% if article %} Edit Article {% else %} Create New Article {% endif %}
     </h1>
@@ -14,7 +14,7 @@
       <div>
         <label for="title" class="block text-sm font-medium mb-2">Title</label>
         <input type="text" id="title" name="title" required value="{{ article.title if article else '' }}"
-          class="input input-bordered w-full" />
+          class="input input-bordered w-full bg-base-200 text-base-content" />
       </div>
 
       <div>
@@ -22,29 +22,29 @@
 
         <!-- DaisyUI Toolbar -->
         <div class="flex flex-wrap gap-2 mb-3">
-          <button type="button" class="btn btn-sm btn-outline btn-neutral" onclick="execCmd('bold')" title="Bold"
+          <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('bold')" title="Bold"
             aria-label="Bold"><b>B</b></button>
 
-          <button type="button" class="btn btn-sm btn-outline btn-neutral" onclick="execCmd('italic')" title="Italic"
+          <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('italic')" title="Italic"
             aria-label="Italic"><i>I</i></button>
 
-          <button type="button" class="btn btn-sm btn-outline btn-neutral" onclick="execCmd('underline')" title="Underline"
+          <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('underline')" title="Underline"
             aria-label="Underline"><u>U</u></button>
 
-          <button type="button" class="btn btn-sm btn-outline btn-neutral" onclick="execCmd('insertOrderedList')"
+          <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('insertOrderedList')"
             title="Numbered List" aria-label="Numbered List">1.</button>
 
-          <button type="button" class="btn btn-sm btn-outline btn-neutral" onclick="execCmd('insertUnorderedList')"
+          <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('insertUnorderedList')"
             title="Bullet List" aria-label="Bullet List">•</button>
 
-          <button type="button" class="btn btn-sm btn-outline btn-neutral"
+          <button type="button" class="btn btn-sm btn-outline"
             onclick="execCmd('createLink', prompt('Enter URL:', 'https://'))" title="Insert Link"
             aria-label="Insert Link">🔗</button>
         </div>
 
         <!-- Editable content area -->
         <div id="editor" contenteditable="true"
-          class="border border-base-300 rounded-lg p-4 min-h-[60vh] prose max-w-full overflow-auto bg-base-100 text-base-content">
+          class="border border-base-300 rounded-lg p-4 min-h-[60vh] prose max-w-full overflow-auto bg-base-200 text-base-content">
           {{ article.content|safe if article else '' }}
         </div>
 
