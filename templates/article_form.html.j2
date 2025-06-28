@@ -9,7 +9,7 @@
 
     <div id="response" class="mb-4 text-sm italic text-error"></div>
 
-    <form method="post" {% if article %} hx-put="/articles/{{ article.id }}" {% else %} hx-post="/articles" {% endif %}
+    <form {% if article %} hx-put="/articles/{{ article.id }}" {% else %} hx-post="/articles" {% endif %}
       hx-ext="json-enc" hx-target="#response" class="space-y-6" onsubmit="submitContent(event)">
       <div>
         <label for="title" class="block text-sm font-medium mb-2">Title</label>

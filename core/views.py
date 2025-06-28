@@ -33,7 +33,7 @@ def get_article_with_relations(session: Session, article_id: int) -> Optional[Ar
         )
         .where(Article.id == article_id)
     )
-    return session.execute(stmt).unique().scalars().first()
+    return session.execute(stmt).unique().scalar_one_or_none()
 
 
 @get("/components/nav")
@@ -49,19 +49,10 @@ def nav(request: Request):
     )
 
 
-@get("/components/article_card/{id}")
+@get("/components/article-card/{id}")
 @with_session
-def articles(request: Request, session: Session, id: str):
-    stmt = (
-        # type: ignore
-        select(Article)
-        .options(
-            joinedload(Article.author_relationship),
-            joinedload(Article.images),
-        )
-        .where(Article.id == id)
-    )
-    article = session.execute(stmt).unique().scalar_one_or_none()
+def card(request: Request, session: Session, id: str):
+    article = get_article_with_relations(session, id)
     serializer = ArticleModelSerializer(instance=article)  # type: ignore
     return templating.render(
         request,
@@ -70,6 +61,17 @@ def articles(request: Request, session: Session, id: str):
             "article": serializer.data,
         },
     )
+
+
+@post("/change-theme")
+def change_theme(request: Request):
+    session = request.session()
+    if theme := session.get("theme"):
+        if theme == "dark":
+            session["theme"] = "light"
+        else:
+            session["theme"] = "dark"
+    return Status.OK
 
 
 @get("/")

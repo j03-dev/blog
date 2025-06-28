@@ -42,8 +42,9 @@ pub_router.routes(
         views.home,
         views.login,
         views.login_form,
-        views.articles,
+        views.card,
         views.get_article,
+        views.change_theme,
         static_file("./static", "static"),
     ]
 )
