@@ -1,0 +1,15 @@
+{% if article %}
+<article
+  class="bg-base-100 border border-base-300 rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300">
+  <h2 class="text-3xl font-bold text-primary mb-2">{{ article.title }}</h2>
+  <p class="text-sm text-base-content/70 italic mb-3">
+    {{ article.at }} — by <span class="underline">{{ article.author.name }}</span>
+  </p>
+  <div class="prose max-w-none line-clamp-4 mb-5 prose-headings:text-primary prose-a:text-secondary">
+    {{ article.content|safe }}
+  </div>
+  <a href="/articles/{{ article.id }}" class="btn btn-sm btn-outline btn-primary uppercase tracking-wide">
+    Read More →
+  </a>
+</article>
+{% endif %}

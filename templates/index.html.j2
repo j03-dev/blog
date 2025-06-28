@@ -2,6 +2,13 @@
 
 {% block content %}
 
-<div hx-get="/components/artciles" hx-trigger="load"></div>
+<section class="min-h-screen bg-base-100 py-12 px-4 md:px-12 lg:px-24 font-sans text-base-content">
+  <div class="space-y-10">
+    {% for article in articles %}
+    <div hx-get="/components/article_card/{{ article.id }}" hx-trigger="load"></div>
+    {% endfor %}
+  </div>
+</section>
+
 
 {% endblock %}

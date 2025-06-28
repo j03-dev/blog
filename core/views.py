@@ -49,27 +49,35 @@ def nav(request: Request):
     )
 
 
-@get("/components/artciles")
+@get("/components/article_card/{id}")
 @with_session
-def articles(request: Request, session: Session):
-    stmt = select(Article).options(  # type: ignore
-        joinedload(Article.author_relationship),
-        joinedload(Article.images),
+def articles(request: Request, session: Session, id: str):
+    stmt = (
+        # type: ignore
+        select(Article)
+        .options(
+            joinedload(Article.author_relationship),
+            joinedload(Article.images),
+        )
+        .where(Article.id == id)
     )
-    articles = session.execute(stmt).unique().scalars().all()
-    serializer = ArticleModelSerializer(instance=articles, many=True)  # type: ignore
+    article = session.execute(stmt).unique().scalar_one_or_none()
+    serializer = ArticleModelSerializer(instance=article)  # type: ignore
     return templating.render(
         request,
-        "components/articles.html.j2",
+        "components/article_card.html.j2",
         {
-            "articles": serializer.data,
+            "article": serializer.data,
         },
     )
 
 
 @get("/")
-def home(request: Request):
-    return templating.render(request, "index.html.j2")
+@with_session
+def home(request: Request, session: Session):
+    articles = session.query(Article).all()
+    serializer = ArticleModelSerializer(instance=articles, many=True)  # type: ignore
+    return templating.render(request, "index.html.j2", {"articles": serializer.data})
 
 
 @get("/articles")

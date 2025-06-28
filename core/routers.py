@@ -1,11 +1,23 @@
-from oxapy import Router, static_file, Redirect
+from oxapy import Router, Request, static_file, Redirect, Response, convert_to_response
 
 from core import views
 
 import logging
 
 
-def protect_page(request, next, **kwargs):
+def pref(request: Request, next, **kwargs):
+    session = request.session()  # type: ignore
+    theme = session.get("theme")
+    if not theme:
+        theme = "ligth"
+        session["theme"] = theme
+
+    response: Response = convert_to_response(next(request, **kwargs))
+    response.insert_header("Set-Cookie", f"theme={theme};Path=/")
+    return response
+
+
+def protect_page(request: Request, next, **kwargs):
     session = request.session()  # type: ignore
     is_auth = session.get("is_auth")
     user_id = session.get("user_id")
@@ -23,6 +35,7 @@ def logger(request, next, **kwargs):
 
 pub_router = Router()
 pub_router.middleware(logger)
+pub_router.middleware(pref)
 pub_router.routes(
     [
         views.nav,
@@ -38,6 +51,7 @@ pub_router.routes(
 sec_router = Router()
 sec_router.middleware(logger)
 sec_router.middleware(protect_page)
+sec_router.middleware(pref)
 sec_router.routes(
     [
         views.article_form,
