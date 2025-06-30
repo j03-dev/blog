@@ -24,7 +24,7 @@ def with_session(func: F) -> F:
     return wrapper  # type: ignore
 
 
-def get_article_with_relations(session: Session, article_id: int) -> Optional[Article]:
+def get_article_with_relations(session: Session, article_id: str) -> Optional[Article]:
     stmt = (
         select(Article)  # type: ignore
         .options(
@@ -77,7 +77,7 @@ def change_theme(request: Request):
 @get("/")
 @with_session
 def home(request: Request, session: Session):
-    articles = session.query(Article).all()
+    articles = session.query(Article).all()  # type: ignore
     serializer = ArticleModelSerializer(instance=articles, many=True)  # type: ignore
     return templating.render(request, "index.html.j2", {"articles": serializer.data})
 
@@ -98,7 +98,7 @@ def create_article(request: Request, session: Session):
 
 @get("/articles/{id}")
 @with_session
-def get_article(request: Request, session: Session, id: int):
+def get_article(request: Request, session: Session, id: str):
     req_session = request.session()
     is_auth = req_session.get("is_auth") if req_session else False
     if article := get_article_with_relations(session, id):
@@ -117,7 +117,7 @@ def get_article(request: Request, session: Session, id: int):
 
 @get("/articles/{id}/edit")
 @with_session
-def edit_form_article(request: Request, session: Session, id: int):
+def edit_form_article(request: Request, session: Session, id: str):
     article = get_article_with_relations(session, id)
     serializer = ArticleModelSerializer(instance=article)  # type: ignore
     return templating.render(
