@@ -63,17 +63,6 @@ def card(request: Request, session: Session, id: str):
     )
 
 
-@post("/change-theme")
-def change_theme(request: Request):
-    session = request.session()
-    if theme := session.get("theme"):
-        if theme == "dark":
-            session["theme"] = "light"
-        else:
-            session["theme"] = "dark"
-    return Status.OK
-
-
 @get("/")
 @with_session
 def home(request: Request, session: Session):
@@ -150,9 +139,7 @@ def delete_article(request: Request, session: Session, id: int):
 
 @get("/login")
 def login(request: Request):
-    query = request.query()
-    message = query.get("message") if query else None
-    return templating.render(request, "login.html.j2", {"message": message})
+    return templating.render(request, "login.html.j2")
 
 
 @post("/login")
@@ -163,11 +150,33 @@ def login_form(request: Request, session: Session):
         serializer.is_valid()
         req_session = request.session()
     except Exception as e:
-        return Redirect(f"/login?message={e}")
+        return templating.render(request, "login.html.j2", {"message": str(e)})
+
     # type: ignore
     if user := session.query(User).filter_by(**serializer.validate_data).first():
         req_session["user_id"] = user.id
         req_session["is_auth"] = True
-        return Redirect("/")
+        articles = session.query(Article).all()  # type: ignore
+        serializer = ArticleModelSerializer(instance=articles, many=True)  # type: ignore
+        return templating.render(
+            request, "index.html.j2", {"articles": serializer.data}
+        )
 
-    return Redirect("/login?message=The Email or Password are False")
+    return templating.render(
+        request,
+        "login.html.j2",
+        {
+            "message": "The Email or Password are False",
+        },
+    )
+
+
+@get("/logout")
+@with_session
+def logout(request: Request, session: Session):
+    req_session = request.session()
+    req_session.remove("is_auth")
+    req_session.remove("user_id")
+    articles = session.query(Article).all()  # type: ignore
+    serializer = ArticleModelSerializer(instance=articles, many=True)  # type: ignore
+    return templating.render(request, "index.html.j2", {"articles": serializer.data})

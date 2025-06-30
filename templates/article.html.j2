@@ -16,7 +16,8 @@
 
     {% if is_auth %}
     <div class="flex flex-wrap items-center gap-4 mb-10">
-      <a href="/articles/{{ article.id }}/edit" class="btn btn-outline btn-primary btn-sm">
+      <a hx-get="/articles/{{ article.id }}/edit" hx-target="#content-wrapper" hx-swap="outerHTML"
+        class="btn btn-outline btn-primary btn-sm">
         ✏️ Edit
       </a>
       <form hx-delete="/articles/{{ article.id }}" hx-target="body" hx-confirm="Are you sure?" method="POST">
@@ -27,7 +28,7 @@
     </div>
     {% endif %}
 
-    <a href="/" class="btn btn-link text-sm uppercase tracking-wide no-underline hover:underline">
+    <a hx-get="/" hx-target="#content-wrapper" hx-swap="outerHTML" class="btn btn-link text-sm uppercase tracking-wide no-underline hover:underline">
       ← Back to Articles
     </a>
   </div>

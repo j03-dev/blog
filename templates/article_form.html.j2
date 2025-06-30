@@ -10,7 +10,7 @@
     <div id="response" class="mb-4 text-sm italic text-error"></div>
 
     <form {% if article %} hx-put="/articles/{{ article.id }}" {% else %} hx-post="/articles" {% endif %}
-      hx-ext="json-enc" hx-target="#response" class="space-y-6" onsubmit="submitContent(event)">
+      hx-ext="json-enc" hx-target="#response" class="space-y-6">
       <div>
         <label for="title" class="block text-sm font-medium mb-2">Title</label>
         <input type="text" id="title" name="title" required value="{{ article.title if article else '' }}"
@@ -59,18 +59,19 @@
   </div>
 </section>
 
-<script>
-  function execCmd(command, value = null) {
-    document.execCommand(command, false, value);
-    document.getElementById('editor').focus();
+{#
+<script> #}
+  {# function execCmd(command, value = null) { #}
+    {# document.execCommand(command, false, value); #}
+    {# document.getElementById('editor').focus(); #}
+    {#} #
   }
 
-  function submitContent(event) {
-    // Don't prevent HTMX from submitting the form
-    const editor = document.getElementById('editor');
-    const textarea = document.getElementById('content');
-    textarea.value = editor.innerHTML;
-    // Let HTMX handle the actual submission
+  {# function submitContent(event) { #}
+    {# const editor = document.getElementById('editor'); #}
+    {# const textarea = document.getElementById('content'); #}
+    {# textarea.value = editor.innerHTML; #}
+    {#} #
   }
-</script>
+  {# </script> #}
 {% endblock %}

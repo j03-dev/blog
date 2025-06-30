@@ -1,9 +1,3 @@
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length == 2) return parts.pop().split(";").shift();
-}
-
 function toggleTheme() {
   const html = document.documentElement;
   const currentTheme = html.getAttribute('data-theme');
@@ -22,9 +16,3 @@ function toggleTheme() {
     icon.classList.toggle('hidden', newTheme === 'light');
   });
 }
-
-if (getCookie("theme") === "dark")
-  document.documentElement.setAttribute('data-theme', 'dark');
-else
-  document.documentElement.setAttribute('data-theme', 'light');
-

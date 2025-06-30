@@ -3,7 +3,7 @@
 {% block content %}
 <div class="min-h-screen flex items-center justify-center bg-base-200 font-sans text-base-content px-4">
   <div class="w-full max-w-sm bg-base-100 rounded-lg shadow-lg border border-base-300 p-8">
-    
+
     {% if message %}
     <div class="alert alert-info mb-6 text-sm">
       {{ message }}
@@ -14,7 +14,7 @@
       Login
     </h1>
 
-    <form hx-post="/login" hx-target="body" hx-ext="json-enc" class="space-y-5">
+    <form hx-post="/login" hx-target="#content-wrapper" hx-swap="outerHTML" hx-ext="json-enc" class="space-y-5">
       <div class="form-control">
         <label for="email" class="label">
           <span class="label-text uppercase text-xs font-semibold">Email</span>

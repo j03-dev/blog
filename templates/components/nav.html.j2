@@ -1,6 +1,6 @@
 <nav class="navbar bg-base-100 shadow-md font-sans px-6 border-b border-base-300">
   <div class="flex-1 navbar-start pr-10">
-    <a href="/"
+    <a hx-get="/" hx-target="#content-wrapper" hx-swap="outerHTML"
       class="text-2xl font-extrabold tracking-wide text-primary hover:text-accent transition-all duration-200">
       Joe's Blog
     </a>
@@ -8,25 +8,29 @@
   <div class="flex-none navbar-end">
     <ul class="menu menu-horizontal gap-3 text-base font-medium items-center">
       <li>
-        <a class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition" href="/">Home</a>
+        <a class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition" hx-get="/"
+          hx-target="#content-wrapper" hx-sawp="outerHTML">Home</a>
       </li>
       <li>
         <a class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition" href="#">About</a>
       </li>
       {% if is_auth %}
       <li>
-        <a class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition" href="/articles">New Article</a>
-      </li>
+        <a hx-get="/articles" hx-target="#content-wrapper" hx-sawp="outerHTML"
+          class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition">
+          New Article
+        </a>
       <li>
         <a class="hover:bg-error hover:text-base-100 px-4 py-2 rounded-lg transition" href="/logout">Logout</a>
       </li>
       {% else %}
       <li>
-        <a class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition" href="/login">Login</a>
+        <a class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition" hx-get="/login"
+          hx-target="#content-wrapper" hx-sawp="outerHTML">Login</a>
       </li>
       {% endif %}
       <li class="shrink-0">
-        <button hx-post="/change-theme" hx-swap="none" onclick="toggleTheme()" class="btn btn-ghost btn-sm btn-circle">
+        <button hx-post="/change-theme" hx-swap="none" id="theme-toggle" class="btn btn-ghost btn-sm btn-circle">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
             stroke="currentColor" class="w-5 h-5 dark-icon">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 
@@ -50,4 +54,8 @@
 </nav>
 
 
-<script> toggleTheme(); </script>
+<script>
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    toggleTheme();
+  });
+</script>
