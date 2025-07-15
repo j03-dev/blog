@@ -2,7 +2,7 @@ from oxapy import Router, Request, static_file, Redirect
 
 from core import views
 
-import logging
+from logging import log
 
 
 def protect_page(request: Request, next, **kwargs):
@@ -17,8 +17,12 @@ def protect_page(request: Request, next, **kwargs):
 
 
 def logger(request, next, **kwargs):
-    logging.log(1000, f"{request.method} {request.uri}")
-    return next(request, **kwargs)
+    log(1000, f"{request.method} {request.uri}")
+    try:
+        response = next(request, **kwargs)
+        return response
+    except Exception as e:
+        log(1000, str(e))
 
 
 pub_router = Router()

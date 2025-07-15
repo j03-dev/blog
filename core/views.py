@@ -1,15 +1,11 @@
 from oxapy import get, delete, put, post, Request, templating, Status, Redirect
 from functools import wraps
-from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import select
+from sqlalchemy.orm import Session
 from typing import Optional, Any, Callable, TypeVar, Union
 
+# from logging import log
 from core.models import Article, User
-from core.serializers import (
-    ArticleModelSerializer,
-    CredentialSerializer,
-    ArticleInputSerializer,
-)
+from core.serializers import CredentialSerializer, ArticleSerializer
 
 F = TypeVar("F", bound=Callable[..., Any])
 ResponseType = Union[templating.Template, Status, Redirect]
@@ -24,16 +20,25 @@ def with_session(func: F) -> F:
     return wrapper  # type: ignore
 
 
-def get_article_with_relations(session: Session, article_id: str) -> Optional[Article]:
-    stmt = (
-        select(Article)  # type: ignore
-        .options(
-            joinedload(Article.author_relationship),
-            joinedload(Article.images),
-        )
-        .where(Article.id == article_id)
+def get_article_by_id(session: Session, article_id: int) -> Optional[Article]:
+    return session.query(Article).filter(Article.id == article_id).first()  # type: ignore
+
+
+def get_authors_article(
+    session: Session,
+    article_id: int,
+    author_id: str,
+) -> Optional[Article]:
+    return (
+        # type: ignore
+        session.query(Article)
+        .filter(Article.id == article_id, Article.author == author_id)
+        .first()
     )
-    return session.execute(stmt).unique().scalar_one_or_none()
+
+
+def get_all_articles(session: Session) -> Optional[Article]:
+    return session.query(Article).all()  # type: ignore
 
 
 @get("/components/nav")
@@ -43,31 +48,28 @@ def nav(request: Request):
     return templating.render(
         request,
         "components/nav.html.j2",
-        {
-            "is_auth": is_auth,
-        },
+        {"is_auth": is_auth},
     )
 
 
-@get("/components/article-card/{id}")
+@get("/components/article-card/{id:int}")
 @with_session
-def card(request: Request, session: Session, id: str):
-    article = get_article_with_relations(session, id)
-    serializer = ArticleModelSerializer(instance=article)  # type: ignore
-    return templating.render(
-        request,
-        "components/article_card.html.j2",
-        {
-            "article": serializer.data,
-        },
-    )
+def card(request: Request, session: Session, id: int):
+    if article := get_article_by_id(session, id):
+        serializer = ArticleSerializer(instance=article)  # type: ignore
+        return templating.render(
+            request,
+            "components/article_card.html.j2",
+            {"article": serializer.data},
+        )
+    return templating.render(request, "components/article_card.html.j2")
 
 
 @get("/")
 @with_session
 def home(request: Request, session: Session):
-    articles = session.query(Article).all()  # type: ignore
-    serializer = ArticleModelSerializer(instance=articles, many=True)  # type: ignore
+    articles = get_all_articles(session)
+    serializer = ArticleSerializer(instance=articles, many=True)  # type: ignore
     return templating.render(request, "index.html.j2", {"articles": serializer.data})
 
 
@@ -79,51 +81,46 @@ def article_form(request: Request):
 @post("/articles")
 @with_session
 def create_article(request: Request, session: Session):
-    serializer = ArticleInputSerializer(request.data, context={"request": request})  # type: ignore
+    serializer = ArticleSerializer(request.data, context={"request": request})  # type: ignore
     serializer.is_valid()
     serializer.save(session)
     return "Success added"
 
 
-@get("/articles/{id}")
+@get("/articles/{id:int}")
 @with_session
-def get_article(request: Request, session: Session, id: str):
+def get_article(request: Request, session: Session, id: int):
     req_session = request.session()
     is_auth = req_session.get("is_auth") if req_session else False
-    if article := get_article_with_relations(session, id):
-        serializer = ArticleModelSerializer(instance=article)  # type: ignore
+    if article := get_article_by_id(session, id):
+        serializer = ArticleSerializer(instance=article)  # type: ignore
         return templating.render(
             request,
             "article.html.j2",
-            {
-                "article": serializer.data,
-                "is_auth": is_auth,
-            },
+            {"article": serializer.data, "is_auth": is_auth},
         )
 
     return templating.render(request, "article.html.j2")
 
 
-@get("/articles/{id}/edit")
+@get("/articles/{id:int}/edit")
 @with_session
-def edit_form_article(request: Request, session: Session, id: str):
-    article = get_article_with_relations(session, id)
-    serializer = ArticleModelSerializer(instance=article)  # type: ignore
+def edit_form_article(request: Request, session: Session, id: int):
+    article = get_article_by_id(session, id)
+    serializer = ArticleSerializer(instance=article)  # type: ignore
     return templating.render(
         request,
         "article_form.html.j2",
-        {
-            "article": serializer.data,
-        },
+        {"article": serializer.data},
     )
 
 
 @put("/articles/{id}")
 @with_session
 def update_article(request: Request, session: Session, id: int):
-    serializer = ArticleInputSerializer(request.data, context={"request": request})  # type: ignore
+    serializer = ArticleSerializer(request.data, context={"request": request})  # type: ignore
     serializer.is_valid()
-    article = session.query(Article).filter_by(id=id, author=request.user_id).first()  # type: ignore
+    article = get_authors_article(session, id, request.user_id)
     serializer.update(article, session)
     return "Article Updated"
 
@@ -131,7 +128,7 @@ def update_article(request: Request, session: Session, id: int):
 @delete("/articles/{id}")
 @with_session
 def delete_article(request: Request, session: Session, id: int):
-    article = session.query(Article).filter_by(id=id, author=request.user_id).first()  # type: ignore
+    article = get_authors_article(session, id, request.user_id)
     session.delete(article)
     session.commit()
     return templating.render(request, "article.html.j2")
@@ -153,21 +150,21 @@ def login_form(request: Request, session: Session):
         return templating.render(request, "login.html.j2", {"message": str(e)})
 
     # type: ignore
-    if user := session.query(User).filter_by(**serializer.validate_data).first():
+    if user := session.query(User).filter_by(**serializer.validated_data).first():
         req_session["user_id"] = user.id
         req_session["is_auth"] = True
-        articles = session.query(Article).all()  # type: ignore
-        serializer = ArticleModelSerializer(instance=articles, many=True)  # type: ignore
+        articles = get_all_articles(session)
+        serializer = ArticleSerializer(instance=articles, many=True)  # type: ignore
         return templating.render(
-            request, "index.html.j2", {"articles": serializer.data}
+            request,
+            "index.html.j2",
+            {"articles": serializer.data},
         )
 
     return templating.render(
         request,
         "login.html.j2",
-        {
-            "message": "The Email or Password are False",
-        },
+        {"message": "The Email or Password are False"},
     )
 
 
@@ -177,6 +174,6 @@ def logout(request: Request, session: Session):
     req_session = request.session()
     req_session.remove("is_auth")
     req_session.remove("user_id")
-    articles = session.query(Article).all()  # type: ignore
-    serializer = ArticleModelSerializer(instance=articles, many=True)  # type: ignore
+    articles = get_all_articles(session)
+    serializer = ArticleSerializer(instance=articles, many=True)  # type: ignore
     return templating.render(request, "index.html.j2", {"articles": serializer.data})

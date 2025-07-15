@@ -2,55 +2,33 @@ from oxapy import serializer
 from core.models import Article
 
 
-class UserInputSerialier(serializer.Serializer):
+class UserSerializer(serializer.Serializer):
+    id = serializer.CharField(read_only=True)
     name = serializer.CharField()
     email = serializer.EmailField()
-    password = serializer.CharField(min_length=8, description="minimum length is 8")
+    password = serializer.CharField(min_length=8, write_only=True, nullable=True)
 
 
-class UserModelSerializer(serializer.Serializer):
-    id = serializer.CharField()
-    name = serializer.CharField()
-    email = serializer.CharField()
-
-
-class ImageModelSerializer(serializer.Serializer):
+class ImageSerializer(serializer.Serializer):
     id = serializer.IntegerField()
     path = serializer.CharField()
 
 
-class ArticleInputSerializer(serializer.Serializer):
+class ArticleSerializer(serializer.Serializer):
+    id = serializer.CharField(read_only=True, required=False, nullable=True)
     title = serializer.CharField()
     content = serializer.CharField()
+    author_relationship = UserSerializer(read_only=True, required=False, nullable=True)  # type: ignore
 
     class Meta:
         model = Article
 
-    def validate(self, attr):
+    def create(self, session, validated_data):
         request = self.context.get("request")
-        attr = super().validate(attr)
-        attr.update({"author": request.user_id})
-        return attr
-
-
-class ArticleModelSerializer(serializer.Serializer):
-    id = serializer.IntegerField()
-    title = serializer.CharField()
-    content = serializer.CharField()
-    at = serializer.DateTimeField()
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-
-        additional = {
-            "author": UserModelSerializer(instance=instance.author_relationship).data,  # type: ignore
-            "images": ImageModelSerializer(instance=instance.images, many=True).data,  # type: ingore
-            "at": data["at"].strftime("%d %B %Y"),
-        }
-
-        data.update(additional)
-
-        return data
+        validated_data = super().validate(validated_data)
+        validated_data["author"] = request.user_id
+        instance = super().create(session, validated_data)
+        return instance
 
 
 class CredentialSerializer(serializer.Serializer):
