@@ -21,7 +21,6 @@ class User(Base):
     articles: Mapped[List["Article"]] = relationship(
         back_populates="author_relationship"
     )
-    images: Mapped[List["Image"]] = relationship(back_populates="owner_relationship")
 
 
 class Article(Base):
@@ -34,16 +33,3 @@ class Article(Base):
     at: Mapped[str] = mapped_column(DateTime(), default=datetime.utcnow)
 
     author_relationship: Mapped["User"] = relationship(back_populates="articles")
-    images: Mapped[List["Image"]] = relationship(back_populates="article")
-
-
-class Image(Base):
-    __tablename__ = "images"
-
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    path: Mapped[str] = mapped_column()
-    owner: Mapped[str] = mapped_column(ForeignKey("users.id"))
-    article_id: Mapped[int] = mapped_column(ForeignKey("articles.id"))
-
-    owner_relationship: Mapped["User"] = relationship(back_populates="images")
-    article: Mapped["Article"] = relationship(back_populates="images")

@@ -23,6 +23,13 @@ class ArticleSerializer(serializer.Serializer):
     class Meta:
         model = Article
 
+    def validate(self, attr):
+        attr = super().validate(attr)
+        content: str = attr["content"]
+        if len(content.strip()) == 0:
+            raise serializer.ValidationException("content should not empty")
+        return attr
+
     def create(self, session, validated_data):
         request = self.context.get("request")
         validated_data = super().validate(validated_data)

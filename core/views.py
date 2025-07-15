@@ -1,11 +1,11 @@
 from oxapy import get, delete, put, post, Request, templating
 from functools import wraps
 from sqlalchemy.orm import Session
-from typing import Optional, Any, Callable, TypeVar
+from typing import Any, Callable, TypeVar
 
 # from logging import log
-from core.models import Article, User
 from core.serializers import CredentialSerializer, ArticleSerializer
+from core import repositories as repo
 
 F = TypeVar("F", bound=Callable[..., Any])
 
@@ -17,27 +17,6 @@ def with_session(func: F) -> F:
             return func(request, session, *args, **kwargs)
 
     return wrapper  # type: ignore
-
-
-def get_article_by_id(session: Session, article_id: int) -> Optional[Article]:
-    return session.query(Article).filter(Article.id == article_id).first()  # type: ignore
-
-
-def get_authors_article(
-    session: Session,
-    article_id: int,
-    author_id: str,
-) -> Optional[Article]:
-    return (
-        # type: ignore
-        session.query(Article)
-        .filter(Article.id == article_id, Article.author == author_id)
-        .first()
-    )
-
-
-def get_all_articles(session: Session) -> Optional[Article]:
-    return session.query(Article).all()  # type: ignore
 
 
 @get("/components/nav")
@@ -54,7 +33,7 @@ def nav(request: Request):
 @get("/components/article-card/{id:int}")
 @with_session
 def card(request: Request, session: Session, id: int):
-    if article := get_article_by_id(session, id):
+    if article := repo.get_article_by_id(session, id):
         serializer = ArticleSerializer(instance=article)  # type: ignore
         return templating.render(
             request,
@@ -67,7 +46,7 @@ def card(request: Request, session: Session, id: int):
 @get("/")
 @with_session
 def home(request: Request, session: Session):
-    articles = get_all_articles(session)
+    articles = repo.get_all_articles(session)
     serializer = ArticleSerializer(instance=articles, many=True)  # type: ignore
     return templating.render(request, "index.html.j2", {"articles": serializer.data})
 
@@ -91,7 +70,7 @@ def create_article(request: Request, session: Session):
 def get_article(request: Request, session: Session, id: int):
     req_session = request.session()
     is_auth = req_session.get("is_auth") if req_session else False
-    if article := get_article_by_id(session, id):
+    if article := repo.get_article_by_id(session, id):
         serializer = ArticleSerializer(instance=article)  # type: ignore
         return templating.render(
             request,
@@ -105,7 +84,7 @@ def get_article(request: Request, session: Session, id: int):
 @get("/articles/{id:int}/edit")
 @with_session
 def edit_form_article(request: Request, session: Session, id: int):
-    article = get_article_by_id(session, id)
+    article = repo.get_article_by_id(session, id)
     serializer = ArticleSerializer(instance=article)  # type: ignore
     return templating.render(
         request,
@@ -119,7 +98,7 @@ def edit_form_article(request: Request, session: Session, id: int):
 def update_article(request: Request, session: Session, id: int):
     serializer = ArticleSerializer(request.data, context={"request": request})  # type: ignore
     serializer.is_valid()
-    article = get_authors_article(session, id, request.user_id)
+    article = repo.get_authors_article(session, id, request.user_id)
     serializer.update(article, session)
     return "Article Updated"
 
@@ -127,7 +106,7 @@ def update_article(request: Request, session: Session, id: int):
 @delete("/articles/{id}")
 @with_session
 def delete_article(request: Request, session: Session, id: int):
-    article = get_authors_article(session, id, request.user_id)
+    article = repo.get_authors_article(session, id, request.user_id)
     session.delete(article)
     session.commit()
     return templating.render(request, "article.html.j2")
@@ -149,16 +128,17 @@ def login_form(request: Request, session: Session):
         return templating.render(request, "login.html.j2", {"message": str(e)})
 
     # type: ignore
-    if user := session.query(User).filter_by(**serializer.validated_data).first():
-        req_session["user_id"] = user.id
-        req_session["is_auth"] = True
-        articles = get_all_articles(session)
-        serializer = ArticleSerializer(instance=articles, many=True)  # type: ignore
-        return templating.render(
-            request,
-            "index.html.j2",
-            {"articles": serializer.data},
-        )
+    if user := repo.get_user_by_email(session, serializer.validated_data["email"]):
+        if user.password == serializer.validated_data["password"]:
+            req_session["user_id"] = user.id
+            req_session["is_auth"] = True
+            articles = repo.get_all_articles(session)
+            serializer = ArticleSerializer(instance=articles, many=True)  # type: ignore
+            return templating.render(
+                request,
+                "index.html.j2",
+                {"articles": serializer.data},
+            )
 
     return templating.render(
         request,
@@ -173,6 +153,6 @@ def logout(request: Request, session: Session):
     req_session = request.session()
     req_session.remove("is_auth")
     req_session.remove("user_id")
-    articles = get_all_articles(session)
+    articles = repo.get_all_articles(session)
     serializer = ArticleSerializer(instance=articles, many=True)  # type: ignore
     return templating.render(request, "index.html.j2", {"articles": serializer.data})

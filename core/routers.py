@@ -19,6 +19,7 @@ def protect_page(request: Request, next, **kwargs):
 def logger(request, next, **kwargs):
     log(1000, f"{request.method} {request.uri}")
     try:
+        log(1000, request.data)
         response = next(request, **kwargs)
         return response
     except Exception as e:
