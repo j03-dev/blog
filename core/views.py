@@ -3,7 +3,6 @@ from functools import wraps
 from sqlalchemy.orm import Session
 from typing import Any, Callable, TypeVar
 
-# from logging import log
 from core.serializers import CredentialSerializer, ArticleSerializer
 from core import repositories as repo
 
@@ -99,7 +98,7 @@ def update_article(request: Request, session: Session, id: int):
     serializer = ArticleSerializer(request.data, context={"request": request})  # type: ignore
     serializer.is_valid()
     article = repo.get_authors_article(session, id, request.user_id)
-    serializer.update(article, session)
+    serializer.update(session, article, serializer.validated_data)
     return "Article Updated"
 
 

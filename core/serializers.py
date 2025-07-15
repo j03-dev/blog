@@ -19,6 +19,7 @@ class ArticleSerializer(serializer.Serializer):
     title = serializer.CharField()
     content = serializer.CharField()
     author_relationship = UserSerializer(read_only=True, required=False, nullable=True)  # type: ignore
+    at = serializer.DateField(required=False, nullable=True, read_only=True)
 
     class Meta:
         model = Article
@@ -36,6 +37,11 @@ class ArticleSerializer(serializer.Serializer):
         validated_data["author"] = request.user_id
         instance = super().create(session, validated_data)
         return instance
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["at"] = instance.at.strftime("%B %d, %Y")
+        return data
 
 
 class CredentialSerializer(serializer.Serializer):
