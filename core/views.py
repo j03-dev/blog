@@ -1,14 +1,13 @@
-from oxapy import get, delete, put, post, Request, templating, Status, Redirect
+from oxapy import get, delete, put, post, Request, templating
 from functools import wraps
 from sqlalchemy.orm import Session
-from typing import Optional, Any, Callable, TypeVar, Union
+from typing import Optional, Any, Callable, TypeVar
 
 # from logging import log
 from core.models import Article, User
 from core.serializers import CredentialSerializer, ArticleSerializer
 
 F = TypeVar("F", bound=Callable[..., Any])
-ResponseType = Union[templating.Template, Status, Redirect]
 
 
 def with_session(func: F) -> F:
