@@ -20,7 +20,6 @@
       <div>
         <label class="block text-sm font-medium mb-2">Content</label>
 
-        <!-- DaisyUI Toolbar -->
         <div class="flex flex-wrap gap-2 mb-3">
           <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('bold')" title="Bold"><b>B</b></button>
           <button type="button" class="btn btn-sm btn-outline" onclick="execCmd('italic')"
@@ -37,13 +36,11 @@
           </button>
         </div>
 
-        <!-- Editable content area -->
         <div id="editor" contenteditable="true"
           class="border border-base-300 rounded-lg p-4 min-h-[60vh] prose max-w-full overflow-auto bg-base-200 text-base-content">
           {{ article.content|safe if article else '' }}
         </div>
 
-        <!-- Hidden textarea for submission -->
         <textarea id="content" name="content" class="hidden"></textarea>
       </div>
 
