@@ -1,17 +1,10 @@
 from oxapy import HttpServer, SessionStore
 from oxapy import templating
-from sqlalchemy.orm import Session
 
 from core.routers import pub_router, sec_router
-from core.app_data import AppData, ENGINE
-from core.repositories import create_user
+from core.app_data import AppData
 
 from settings import TEMPLATE_DIR
-
-
-def create_user_manually(name: str, email: str, password: str):
-    with Session(ENGINE) as session:  # type: ignore
-        create_user(session, name, email, password)
 
 
 server = HttpServer(("0.0.0.0", 8000))

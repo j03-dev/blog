@@ -22,7 +22,7 @@ def get_authors_article(
 
 
 def get_all_articles(session: Session) -> list[Article]:
-    return session.query(Article).all()  # type: ignore
+    return session.query(Article).all()[::-1]  # type: ignore
 
 
 def get_user_by_email(session: Session, email: str) -> Optional[User]:
