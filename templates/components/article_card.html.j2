@@ -5,7 +5,7 @@
   <p class="text-sm text-base-content/70 italic mb-3">
     {{ article.at }} — by <span class="underline">{{ article.author_relationship.name }}</span>
   </p>
-  <div class="prose max-w-none line-clamp-4 mb-5 prose-headings:text-primary prose-a:text-secondary">
+  <div class="prose max-w-none line-clamp-[1] mb-5 prose-headings:text-primary prose-a:text-secondary">
     {{ article.content|safe }}
   </div>
   <a hx-get="/articles/{{ article.id }}" hx-target="#content-wrapper" hx-swap="outerHTML" class="btn btn-sm btn-outline btn-primary uppercase tracking-wide">
