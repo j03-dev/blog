@@ -33,3 +33,10 @@ class Article(Base):
     at: Mapped[str] = mapped_column(DateTime(), default=datetime.utcnow)
 
     author_relationship: Mapped["User"] = relationship(back_populates="articles")
+
+
+class Subscriber(Base):
+    __tablename__ = "subscribers"
+
+    id: Mapped[str] = mapped_column(primary_key=True)
+    email: Mapped[str] = mapped_column(unique=True, nullable=False)

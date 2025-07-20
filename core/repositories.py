@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from typing import Optional
-from core.models import Article, User
+from core.models import Article, User, Subscriber
 from uuid import uuid4
 
 
@@ -30,6 +30,16 @@ def get_user_by_email(session: Session, email: str) -> Optional[User]:
 
 
 def create_user(session: Session, name: str, email: str, password: str):
-    new_user = User(id=str(uuid4()), name=name, email=email, password=password)
+    new_user = User(id=str(uuid4()), name=name, email=email, password=password)  # type: ignore
     session.add(new_user)
     session.commit()
+
+
+def create_subscriber(session: Session, email: str):
+    new_subscriber = Subscriber(id=str(uuid4()), email=email)  # type: ignore
+    session.add(new_subscriber)
+    session.commit()
+
+
+def get_all_subscribers(session: Session):
+    return session.query(Subscriber).all()

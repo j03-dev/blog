@@ -1,21 +1,10 @@
 from oxapy import get, delete, put, post, Request, templating
-from functools import wraps
 from sqlalchemy.orm import Session
-from typing import Any, Callable, TypeVar
 
+from core.utils import with_session
 from core.serializers import CredentialSerializer, ArticleSerializer
 from core import repositories as repo
-
-F = TypeVar("F", bound=Callable[..., Any])
-
-
-def with_session(func: F) -> F:
-    @wraps(func)
-    def wrapper(request: Request, *args, **kwargs):
-        with Session(request.app_data.engine) as session:  # type: ignore
-            return func(request, session, *args, **kwargs)
-
-    return wrapper  # type: ignore
+from core import services as srvs
 
 
 @get("/components/nav")
@@ -95,19 +84,16 @@ def edit_form_article(request: Request, session: Session, id: int):
 @put("/articles/{id}")
 @with_session
 def update_article(request: Request, session: Session, id: int):
-    serializer = ArticleSerializer(request.data, context={"request": request})  # type: ignore
-    serializer.is_valid()
-    article = repo.get_authors_article(session, id, request.user_id)
-    serializer.update(session, article, serializer.validated_data)
+    new_article = ArticleSerializer(request.data, context={"request": request})  # type: ignore
+    new_article.is_valid()
+    srvs.update_article(session, new_article, id, request.user_id)
     return "Article Updated"
 
 
 @delete("/articles/{id}")
 @with_session
 def delete_article(request: Request, session: Session, id: int):
-    article = repo.get_authors_article(session, id, request.user_id)
-    session.delete(article)
-    session.commit()
+    srvs.delete_article(session, id, request.user_id)
     return templating.render(request, "article.html.j2")
 
 
@@ -119,25 +105,22 @@ def login(request: Request):
 @post("/login")
 @with_session
 def login_form(request: Request, session: Session):
-    serializer = CredentialSerializer(request.data)  # type: ignore
+    req_session = request.session()
+    cred = CredentialSerializer(request.data)  # type: ignore
     try:
-        serializer.is_valid()
-        req_session = request.session()
+        cred.is_valid()
     except Exception as e:
         return templating.render(request, "login.html.j2", {"message": str(e)})
-
-    # type: ignore
-    if user := repo.get_user_by_email(session, serializer.validated_data["email"]):
-        if user.password == serializer.validated_data["password"]:
-            req_session["user_id"] = user.id
-            req_session["is_auth"] = True
-            articles = repo.get_all_articles(session)
-            serializer = ArticleSerializer(instance=articles, many=True)  # type: ignore
-            return templating.render(
-                request,
-                "index.html.j2",
-                {"articles": serializer.data},
-            )
+    if user := srvs.login(session, cred):
+        req_session["user_id"] = user.id
+        req_session["is_auth"] = True
+        articles = repo.get_all_articles(session)
+        serializer = ArticleSerializer(instance=articles, many=True)  # type: ignore
+        return templating.render(
+            request,
+            "index.html.j2",
+            {"articles": serializer.data},
+        )
 
     return templating.render(
         request,
