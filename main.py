@@ -2,9 +2,8 @@ from oxapy import HttpServer, SessionStore
 from oxapy import templating
 
 from core.routers import pub_router, sec_router
-from core.app_data import AppData
 
-from settings import TEMPLATE_DIR
+from settings import AppData, TEMPLATE_DIR
 
 
 server = HttpServer(("0.0.0.0", 8000))

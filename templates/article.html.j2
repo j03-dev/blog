@@ -11,7 +11,7 @@
     </p>
 
     <div
-      class="prose max-w-none prose-base mb-8 prose-headings:text-primary prose-a:text-secondary prose-p:my-2 prose-li:my-1">
+      class="prose max-w-none prose-base mb-8 text-justify prose-headings:text-primary prose-a:text-secondary  prose-p:my-2 prose-li:my-1">
       {{ article.content|safe }}
     </div>
 
@@ -21,7 +21,8 @@
         class="btn btn-outline btn-primary btn-sm">
         ✏️ Edit
       </a>
-      <form hx-delete="/articles/{{ article.id }}" hx-target="body" hx-confirm="Are you sure?" method="POST">
+      <form hx-delete="/articles/{{ article.id }}" hx-target="#content-wrapper" hx-swap="outerHTML"
+        hx-confirm="Are you sure?">
         <button type="submit" class="btn btn-outline btn-error btn-sm">
           🗑️ Delete
         </button>

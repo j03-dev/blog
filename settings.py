@@ -10,18 +10,22 @@ load_dotenv()
 
 TURSO_DATABASE_URL = getenv("TURSO_DATABASE_URL")
 TURSO_AUTH_TOKEN = getenv("TURSO_AUTH_TOKEN")
-EMAIL_ADDR = getenv("EMAIL_ADDR")
-EMAIL_PASSWORD = getenv("EMAIL_PASSWORD")
+MAIL_TRAP_TOKEN = getenv("MAIL_TRAP_TOKEN")
 TEMPLATE_DIR = "templates/**/*.j2"
 
 ENGINE = create_engine(
     "sqlite+libsql:///replicate.db",
-    connect_args={
-        "auth_token": TURSO_AUTH_TOKEN,
-        "sync_url": TURSO_DATABASE_URL,
-    },
+    # connect_args={
+    #     "auth_token": TURSO_AUTH_TOKEN,
+    #     "sync_url": TURSO_DATABASE_URL,
+    # },
 )
 Base.metadata.create_all(ENGINE)
+
+
+class AppData:
+    def __init__(self):
+        self.engine = ENGINE
 
 
 def create_user_manually(name: str, email: str, password: str):

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from settings import EMAIL_ADDR, EMAIL_PASSWORD
+from settings import MAIL_TRAP_TOKEN
 
 import smtplib
 
@@ -22,17 +22,15 @@ def with_session(func: F) -> F:
 
 
 def send_email(recipient_emails: List[str], subject: str, body: str):
-    server = smtplib.SMTP("smpt.gmail.com", 587)
-    server.starttls()
-    server.login(EMAIL_ADDR, EMAIL_PASSWORD)  # type: ignore
+    with smtplib.SMTP("live.smtp.mailtrap.io", 587) as server:
+        server.starttls()
+        server.login("api", MAIL_TRAP_TOKEN)  # type: ignore
 
-    for recipient in recipient_emails:
-        msg = MIMEMultipart()
-        msg["From"] = EMAIL_ADDR  # type: ignore
-        msg["To"] = recipient
-        msg["Subject"] = subject
+        for recipient in recipient_emails:
+            msg = MIMEMultipart()
+            msg["From"] = "joe@demomailtrap.co"  # type: ignore
+            msg["To"] = recipient
+            msg["Subject"] = subject
 
-        msg.attach(MIMEText(body, "plain"))
-        server.send_message(msg)
-
-    server.quit()
+            msg.attach(MIMEText(body, "plain"))
+            server.send_message(msg)
