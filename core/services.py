@@ -1,5 +1,5 @@
-from core import repositories as repo
 from sqlalchemy.orm import Session
+from core import repositories as repo
 from core.serializers import ArticleSerializer, CredentialSerializer
 from core.utils import send_email
 
@@ -11,14 +11,14 @@ def login(session: Session, cred: CredentialSerializer):
     return None
 
 
-def publish_new_artice(session: Session, article: ArticleSerializer):
+def publish_new_article(session: Session, article: ArticleSerializer):
     subscribers = repo.get_all_subscribers(session)
     new_article = article.save(session)
     recipient_emails = [sub.email for sub in subscribers]
     send_email(
         recipient_emails,
         "New Article on Joe's blog",
-        f"Title:  {new_article.title}",
+        f"Title: {new_article.title}",
     )
     return new_article
 

@@ -42,4 +42,4 @@ def create_subscriber(session: Session, email: str):
 
 
 def get_all_subscribers(session: Session):
-    return session.query(Subscriber).all()
+    return session.query(Subscriber).all()  # type: ignore

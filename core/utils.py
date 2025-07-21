@@ -24,11 +24,11 @@ def with_session(func: F) -> F:
 def send_email(recipient_emails: List[str], subject: str, body: str):
     server = smtplib.SMTP("smpt.gmail.com", 587)
     server.starttls()
-    server.login(EMAIL_ADDR, EMAIL_PASSWORD)
+    server.login(EMAIL_ADDR, EMAIL_PASSWORD)  # type: ignore
 
     for recipient in recipient_emails:
         msg = MIMEMultipart()
-        msg["From"] = EMAIL_ADDR
+        msg["From"] = EMAIL_ADDR  # type: ignore
         msg["To"] = recipient
         msg["Subject"] = subject
 
