@@ -1,6 +1,7 @@
 from oxapy import Router, Request, static_file, Redirect
 
 from core import views
+from settings import DB
 
 from logging import log
 
@@ -16,14 +17,17 @@ def protect_page(request: Request, next, **kwargs):
     return Redirect("/login")
 
 
-def logger(request, next, **kwargs):
-    log(1000, f"{request.method} {request.uri}")
-    response = next(request, **kwargs)
-    return response
+def db_session(request, next, **kwargs):
+    db = DB()
+    try:
+        setattr(request, "db", db)
+        return next(request, **kwargs)
+    finally:
+        db.close()
 
 
 pub_router = Router()
-pub_router.middleware(logger)
+pub_router.middleware(db_session)
 pub_router.routes(
     [
         views.nav,
@@ -37,8 +41,8 @@ pub_router.routes(
 )
 
 sec_router = Router()
-sec_router.middleware(logger)
 sec_router.middleware(protect_page)
+sec_router.middleware(db_session)
 sec_router.routes(
     [
         views.article_form,

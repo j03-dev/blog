@@ -1,7 +1,7 @@
 from os import getenv
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, sessionmaker
 
 from core.models import Base
 from core.repositories import create_user
@@ -15,17 +15,13 @@ TEMPLATE_DIR = "templates/**/*.j2"
 
 ENGINE = create_engine(
     "sqlite+libsql:///replicate.db",
-    # connect_args={
-    #     "auth_token": TURSO_AUTH_TOKEN,
-    #     "sync_url": TURSO_DATABASE_URL,
-    # },
+    connect_args={
+        "auth_token": TURSO_AUTH_TOKEN,
+        "sync_url": TURSO_DATABASE_URL,
+    },
 )
-Base.metadata.create_all(ENGINE)
 
-
-class AppData:
-    def __init__(self):
-        self.engine = ENGINE
+DB = sessionmaker(bind=ENGINE)
 
 
 def create_user_manually(name: str, email: str, password: str):
