@@ -18,7 +18,7 @@ class ArticleSerializer(serializer.Serializer):
     id = serializer.CharField(read_only=True, required=False, nullable=True)
     title = serializer.CharField()
     content = serializer.CharField()
-    author_relationship = UserSerializer(read_only=True, required=False, nullable=True)  # type: ignore
+    author_relationship = UserSerializer(read_only=True, required=False, nullable=True)
     at = serializer.DateField(required=False, nullable=True, read_only=True)
 
     class Meta:

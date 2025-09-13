@@ -1,7 +1,6 @@
-from oxapy import get, delete, put, post, Request, templating
+from oxapy import get, delete, put, post, render, Request, templating
 from sqlalchemy.orm import Session
 
-from core.utils import with_session
 from core.serializers import CredentialSerializer, ArticleSerializer
 from core import repositories as repo
 from core import services as srvs
@@ -11,7 +10,7 @@ from core import services as srvs
 def nav(request: Request):
     session = request.session()
     is_auth = session.get("is_auth") if session else False
-    return templating.render(
+    return render(
         request,
         "components/nav.html.j2",
         {"is_auth": is_auth},
@@ -21,30 +20,30 @@ def nav(request: Request):
 @get("/components/article-card/{id:int}")
 def card(request: Request, id: int):
     if article := repo.get_article_by_id(request.db, id):
-        serializer = ArticleSerializer(instance=article)  # type: ignore
-        return templating.render(
+        serializer = ArticleSerializer(instance=article)
+        return render(
             request,
             "components/article_card.html.j2",
             {"article": serializer.data},
         )
-    return templating.render(request, "components/article_card.html.j2")
+    return render(request, "components/article_card.html.j2")
 
 
 @get("/")
 def home(request: Request):
     articles = repo.get_all_articles(request.db)
-    serializer = ArticleSerializer(instance=articles, many=True)  # type: ignore
-    return templating.render(request, "index.html.j2", {"articles": serializer.data})
+    serializer = ArticleSerializer(instance=articles, many=True)
+    return render(request, "index.html.j2", {"articles": serializer.data})
 
 
 @get("/articles")
 def article_form(request: Request):
-    return templating.render(request, "article_form.html.j2")
+    return render(request, "article_form.html.j2")
 
 
 @post("/articles")
 def create_article(request: Request):
-    serializer = ArticleSerializer(request.data, context={"request": request})  # type: ignore
+    serializer = ArticleSerializer(request.data, context={"request": request})
     serializer.is_valid()
     serializer.save(request.db)
     return "Success added"
@@ -55,21 +54,21 @@ def get_article(request: Request, id: int):
     session = request.session()
     is_auth = session.get("is_auth") if session else False
     if article := repo.get_article_by_id(request.db, id):
-        serializer = ArticleSerializer(instance=article)  # type: ignore
-        return templating.render(
+        serializer = ArticleSerializer(instance=article)
+        return render(
             request,
             "article.html.j2",
             {"article": serializer.data, "is_auth": is_auth},
         )
 
-    return templating.render(request, "article.html.j2")
+    return render(request, "article.html.j2")
 
 
 @get("/articles/{id:int}/edit")
 def edit_form_article(request: Request, id: int):
     article = repo.get_article_by_id(request.db, id)
-    serializer = ArticleSerializer(instance=article)  # type: ignore
-    return templating.render(
+    serializer = ArticleSerializer(instance=article)
+    return render(
         request,
         "article_form.html.j2",
         {"article": serializer.data},
@@ -78,7 +77,7 @@ def edit_form_article(request: Request, id: int):
 
 @put("/articles/{id}")
 def update_article(request: Request, id: int):
-    new_article = ArticleSerializer(request.data, context={"request": request})  # type: ignore
+    new_article = ArticleSerializer(request.data, context={"request": request})
     new_article.is_valid()
     srvs.update_article(request.db, new_article, id, request.user_id)
     return "Article Updated"
@@ -87,34 +86,34 @@ def update_article(request: Request, id: int):
 @delete("/articles/{id}")
 def delete_article(request: Request, id: int):
     srvs.delete_article(request.db, id, request.user_id)
-    return templating.render(request, "article.html.j2")
+    return render(request, "article.html.j2")
 
 
 @get("/login")
 def login(request: Request):
-    return templating.render(request, "login.html.j2")
+    return render(request, "login.html.j2")
 
 
 @post("/login")
 def login_form(request: Request):
     session = request.session()
-    cred = CredentialSerializer(request.data)  # type: ignore
+    cred = CredentialSerializer(request.data)
     try:
         cred.is_valid()
     except Exception as e:
-        return templating.render(request, "login.html.j2", {"message": str(e)})
+        return render(request, "login.html.j2", {"message": str(e)})
     if user := srvs.login(request.db, cred):
         session["user_id"] = user.id
         session["is_auth"] = True
         articles = repo.get_all_articles(request.db)
-        serializer = ArticleSerializer(instance=articles, many=True)  # type: ignore
-        return templating.render(
+        serializer = ArticleSerializer(instance=articles, many=True)
+        return render(
             request,
             "index.html.j2",
             {"articles": serializer.data},
         )
 
-    return templating.render(
+    return render(
         request,
         "login.html.j2",
         {"message": "The Email or Password are False"},
@@ -127,5 +126,5 @@ def logout(request: Request):
     session.remove("is_auth")
     session.remove("user_id")
     articles = repo.get_all_articles(request.db)
-    serializer = ArticleSerializer(instance=articles, many=True)  # type: ignore
-    return templating.render(request, "index.html.j2", {"articles": serializer.data})
+    serializer = ArticleSerializer(instance=articles, many=True)
+    return render(request, "index.html.j2", {"articles": serializer.data})
