@@ -7,7 +7,7 @@ from logging import log
 
 
 def protect_page(request: Request, next, **kwargs):
-    session = request.session()  # type: ignore
+    session = request.session()
     is_auth = session.get("is_auth")
     user_id = session.get("user_id")
 
