@@ -5,10 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12.3"
 dependencies = [
-    "oxapy>=0.6.6",
+    "oxapy>=0.6.7",
     "pyproject-toml>=0.1.0",
     "python-dotenv>=1.1.0",
-    "sqlalchemy-libsql>=0.2.0",
+    "sqlalchemy-libsql==0.2.0",
 ]
 
 [tool.setuptools]

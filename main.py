@@ -6,11 +6,12 @@ from core.routers import pub_router, sec_router
 from settings import TEMPLATE_DIR
 
 
-server = HttpServer(("0.0.0.0", 8000))
-server.session_store(SessionStore())
-server.template(templating.Template(TEMPLATE_DIR))
-server.attach(pub_router)
-server.attach(sec_router)
-
 if __name__ == "__main__":
-    server.run()
+    (
+        HttpServer(("0.0.0.0", 8000))
+        .session_store(SessionStore())
+        .template(templating.Template(TEMPLATE_DIR))
+        .attach(pub_router)
+        .attach(sec_router)
+        .run()
+    )
