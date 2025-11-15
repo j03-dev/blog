@@ -3,8 +3,6 @@ from oxapy import Router, Request, static_file, Redirect
 from core import views
 from settings import DB
 
-from logging import log
-
 
 def protect_page(request: Request, next, **kwargs):
     session = request.session()

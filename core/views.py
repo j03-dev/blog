@@ -1,5 +1,4 @@
-from oxapy import get, delete, put, post, render, Request, templating
-from sqlalchemy.orm import Session
+from oxapy import get, delete, put, post, render, Request
 
 from core.serializers import CredentialSerializer, ArticleSerializer
 from core import repositories as repo
