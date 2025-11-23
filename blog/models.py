@@ -1,26 +1,8 @@
-from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Text, DateTime, ForeignKey
-
-from typing import List
-
 from datetime import datetime
-
-
-class Base(DeclarativeBase):
-    pass
-
-
-class User(Base):
-    __tablename__ = "users"
-
-    id: Mapped[str] = mapped_column(String(36), primary_key=True)
-    name: Mapped[str] = mapped_column(unique=True)
-    email: Mapped[str] = mapped_column(String(255), unique=True)
-    password: Mapped[str] = mapped_column(String(255), nullable=False)
-
-    articles: Mapped[List["Article"]] = relationship(
-        back_populates="author_relationship"
-    )
+from core.database import Base
+from authentication.models import User
 
 
 class Article(Base):

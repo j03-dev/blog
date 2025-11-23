@@ -1,12 +1,6 @@
 from oxapy import serializer
-from core.models import Article
-
-
-class UserSerializer(serializer.Serializer):
-    id = serializer.CharField(read_only=True)
-    name = serializer.CharField()
-    email = serializer.EmailField()
-    password = serializer.CharField(min_length=8, write_only=True, nullable=True)
+from blog.models import Article
+from authentication.serializers import UserSerializer
 
 
 class ImageSerializer(serializer.Serializer):
@@ -42,8 +36,3 @@ class ArticleSerializer(serializer.Serializer):
         data = super().to_representation(instance)
         data["at"] = instance.at.strftime("%B %d, %Y")
         return data
-
-
-class CredentialSerializer(serializer.Serializer):
-    email = serializer.EmailField()
-    password = serializer.CharField()

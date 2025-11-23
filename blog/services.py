@@ -1,13 +1,6 @@
 from sqlalchemy.orm import Session
-from core import repositories as repo
-from core.serializers import ArticleSerializer, CredentialSerializer
-
-
-def login(session: Session, cred: CredentialSerializer):
-    if user := repo.get_user_by_email(session, cred.validated_data["email"]):
-        if user.password == cred.validated_data["password"]:
-            return user
-    return None
+from blog import repositories as repo
+from blog.serializers import ArticleSerializer
 
 
 def publish_new_article(session: Session, article: ArticleSerializer):

@@ -1,15 +1,22 @@
-from oxapy import HttpServer, SessionStore
-from oxapy import templating
+from oxapy import HttpServer, SessionStore, Router, templating, static_file
 
-from core.routers import pub_router, sec_router
+from authentication.routers import router as auth_router
+from blog.routers import router as blog_router
 
 from settings import TEMPLATE_DIR
 
-app = HttpServer(("0.0.0.0", 8000))
-app.session_store(SessionStore())
-app.template(templating.Template(TEMPLATE_DIR))
-app.attach(pub_router)
-app.attach(sec_router)
+
+def main():
+    (
+        HttpServer(("0.0.0.0", 8000))
+        .session_store(SessionStore())
+        .template(templating.Template(TEMPLATE_DIR))
+        .attach(Router().route(static_file()))
+        .attach(auth_router)
+        .attach(blog_router)
+        .run()
+    )
+
 
 if __name__ == "__main__":
-    app.run()
+    main()

@@ -1,9 +1,8 @@
 from os import getenv
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import sessionmaker
 
-from core.repositories import create_user
 
 load_dotenv()
 
@@ -21,8 +20,3 @@ ENGINE = create_engine(
 )
 
 DB = sessionmaker(bind=ENGINE)
-
-
-def create_user_manually(name: str, email: str, password: str):
-    with Session(ENGINE) as session:  # type: ignore
-        create_user(session, name, email, password)
