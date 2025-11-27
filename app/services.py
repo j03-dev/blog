@@ -1,13 +1,14 @@
 from sqlalchemy.orm import Session
-from blog import repositories as repo
-from blog.serializers import ArticleSerializer
+
+from app.serializers import CredentialSerializer, ArticleSerializer
+from app import repositories as repo
 
 
-def publish_new_article(session: Session, article: ArticleSerializer):
-    subscribers = repo.get_all_subscribers(session)
-    new_article = article.save(session)
-    recipient_emails = [sub.email for sub in subscribers]
-    return new_article
+def login(session: Session, cred: CredentialSerializer):
+    if user := repo.get_user_by_email(session, cred.validated_data["email"]):
+        if user.password == cred.validated_data["password"]:
+            return user
+    return None
 
 
 def update_article(
