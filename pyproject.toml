@@ -8,7 +8,7 @@ dependencies = [
     "oxapy==0.7.3",
     "pyproject-toml>=0.1.0",
     "python-dotenv>=1.1.0",
-    "sqlalchemy-libsql==0.2.0",
+    "sqlalchemy-libsql @ git+https://github.com/j03-dev/sqlalchemy-libsql@fix/segmentation_fault_13",
 ]
 
 [tool.setuptools]

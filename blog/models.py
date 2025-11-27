@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Text, DateTime, ForeignKey
+from sqlalchemy import Text, DateTime, ForeignKey
 from datetime import datetime
 from core.database import Base
 from authentication.models import User
@@ -14,7 +14,9 @@ class Article(Base):
     author: Mapped[str] = mapped_column(ForeignKey("users.id"))
     at: Mapped[str] = mapped_column(DateTime(), default=datetime.utcnow)
 
-    author_relationship: Mapped["User"] = relationship(back_populates="articles")
+    author_relationship: Mapped["User"] = relationship(
+        back_populates="articles",
+    )
 
 
 class Subscriber(Base):

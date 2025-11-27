@@ -76,3 +76,7 @@ def update_article(request: Request, id: int):
 def delete_article(request: Request, id: int):
     srvs.delete_article(request.db, id, request.user_id)
     return render(request, "article.html.j2")
+
+
+def about(request: Request):
+    return render(request, "about.html.j2")

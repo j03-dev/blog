@@ -1,7 +1,7 @@
 from oxapy import Router, get, post
 
 from core.middleware import protect_page, db_session
-from authentication.views import *
+from authentication.views import login_page, login, logout
 
 router = (
     Router()
