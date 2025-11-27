@@ -1,9 +1,8 @@
 from oxapy import HttpServer, SessionStore, Router, templating, static_file
 
-from authentication.routers import router as auth_router
-from blog.routers import router as blog_router
-
 from settings import TEMPLATE_DIR
+
+import app
 
 
 def main():
@@ -12,8 +11,7 @@ def main():
         .session_store(SessionStore())
         .template(templating.Template(TEMPLATE_DIR))
         .attach(Router().route(static_file()))
-        .attach(auth_router)
-        .attach(blog_router)
+        .attach(app.router)
         .run()
     )
 
