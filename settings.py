@@ -8,7 +8,6 @@ load_dotenv()
 
 TURSO_DATABASE_URL = getenv("TURSO_DATABASE_URL")
 TURSO_AUTH_TOKEN = getenv("TURSO_AUTH_TOKEN")
-MAIL_TRAP_TOKEN = getenv("MAIL_TRAP_TOKEN")
 TEMPLATE_DIR = "templates/**/*.j2"
 
 ENGINE = create_engine(
