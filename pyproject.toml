@@ -12,4 +12,4 @@ dependencies = [
 ]
 
 [tool.setuptools]
-packages = ["core"]
+packages = ["core", "app"]
