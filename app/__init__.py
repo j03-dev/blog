@@ -7,7 +7,7 @@ from core.middleware import db_session, protect_page
 router = (
     Router()
     .middleware(db_session)
-    .routes([login_form, authenticate_user, nav, card, about, get_article])
+    .routes([home, login_form, authenticate_user, nav, card, about, get_article])
     .scope()
     .middleware(db_session)
     .middleware(protect_page)
