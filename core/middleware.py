@@ -15,7 +15,7 @@ def protect_page(request: Request, next: Next, **kwargs):
     return Redirect("/login")
 
 
-def db_session(request, next, **kwargs):
+def db_session(request: Request, next: Next, **kwargs):
     db = DB()
     try:
         request.db = db
