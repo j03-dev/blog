@@ -1,9 +1,12 @@
-from oxapy import Redirect
+import typing
+from oxapy import Redirect, Request
 from settings import DB
 
+Next = typing.Callable[[Request, typing.Any], typing.Any]
 
-def protect_page(request, next, **kwargs):
-    session = request.session()
+
+def protect_page(request: Request, next: Next, **kwargs):
+    session = request.session
     is_auth = session.get("is_auth")
     user_id = session.get("user_id")
     if is_auth:
