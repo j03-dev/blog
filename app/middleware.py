@@ -1,6 +1,6 @@
 import typing
 from oxapy import Redirect, Request
-from settings import DB
+from config import DB
 
 Next = typing.Callable[[Request, typing.Any], typing.Any]
 

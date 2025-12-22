@@ -31,7 +31,7 @@ def get_authors_article(
     )
 
 
-def get_all_articles(session: Session) -> list[Article]:
+def get_all_articles(session: Session) -> list[type[Article]]:
     return session.query(Article).all()[::-1]
 
 

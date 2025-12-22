@@ -68,7 +68,7 @@ def nav(req: Request):
 
 
 @get("/components/article-card/{id:int}")
-def card(req: Request, id: str):
+def card(req: Request, id: int):
     if article := repo.get_article_by_id(req.db, id):
         serializer = ArticleSerializer(instance=article)
         return render(

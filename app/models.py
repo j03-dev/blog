@@ -1,9 +1,11 @@
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import String, Text, DateTime, ForeignKey
 from datetime import datetime
 from typing import List
 
-from core.database import Base
+
+class Base(DeclarativeBase):
+    pass
 
 
 class User(Base):

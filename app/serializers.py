@@ -1,4 +1,5 @@
 from oxapy import serializer
+
 from app.models import Article
 
 
