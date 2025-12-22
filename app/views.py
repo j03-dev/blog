@@ -1,4 +1,4 @@
-from oxapy import render, get, post, put, delete
+from oxapy import Request, render, get, post, put, delete
 
 
 from app.serializers import CredentialSerializer, ArticleSerializer
@@ -7,25 +7,25 @@ from app import services as srvs
 
 
 @get("/")
-def home(req):
+def home(req: Request):
     articles = repo.get_all_articles(req.db)
     serializer = ArticleSerializer(instance=articles, many=True)
     return render(req, "index.html.j2", {"articles": serializer.data})
 
 
 @get("/about")
-def about(req):
+def about(req: Request):
     return render(req, "about.html.j2")
 
 
 @get("/login")
-def login_form(req):
+def login_form(req: Request):
     return render(req, "login.html.j2")
 
 
 @post("/login")
-def authenticate_user(req):
-    session = req.session()
+def authenticate_user(req: Request):
+    session = req.session
     cred = CredentialSerializer(req.data)
     try:
         cred.is_valid()
@@ -50,19 +50,16 @@ def authenticate_user(req):
 
 
 @get("/logout")
-def logout(req):
-    session = req.session()
-    session.remove("is_auth")
-    session.remove("user_id")
+def logout(req: Request):
+    req.session.clear()
     articles = repo.get_all_articles(req.db)
     serializer = ArticleSerializer(instance=articles, many=True)
     return render(req, "index.html.j2", {"articles": serializer.data})
 
 
 @get("/components/nav")
-def nav(req):
-    session = req.session()
-    is_auth = session.get("is_auth") if session else False
+def nav(req: Request):
+    is_auth = req.session.get("is_auth") or False
     return render(
         req,
         "components/nav.html.j2",
@@ -71,7 +68,7 @@ def nav(req):
 
 
 @get("/components/article-card/{id:int}")
-def card(req, id):
+def card(req: Request, id: str):
     if article := repo.get_article_by_id(req.db, id):
         serializer = ArticleSerializer(instance=article)
         return render(
@@ -88,7 +85,7 @@ def article_form(req):
 
 
 @post("/articles")
-def create_article(req):
+def create_article(req: Request):
     serializer = ArticleSerializer(req.data, context={"req": req})
     serializer.is_valid()
     serializer.save(req.db)
@@ -96,9 +93,8 @@ def create_article(req):
 
 
 @get("/articles/{id:int}")
-def get_article(req, id):
-    session = req.session()
-    is_auth = session.get("is_auth") if session else False
+def get_article(req: Request, id: int):
+    is_auth = req.session.get("is_auth") or False
     if article := repo.get_article_by_id(req.db, id):
         serializer = ArticleSerializer(instance=article)
         return render(
@@ -122,7 +118,7 @@ def edit_form_article(req, id):
 
 
 @put("/articles/{id:int}")
-def update_article(req, id):
+def update_article(req: Request, id:int):
     new_article = ArticleSerializer(req.data, context={"req": req})
     new_article.is_valid()
     srvs.update_article(req.db, new_article, id, req.user_id)
@@ -130,6 +126,6 @@ def update_article(req, id):
 
 
 @delete("/articles/{id:int}")
-def delete_article(req, id):
+def delete_article(req: Request, id: int):
     srvs.delete_article(req.db, id, req.user_id)
     return render(req, "article.html.j2")
