@@ -12,7 +12,7 @@ class UserSerializer(serializer.Serializer):
 
 class CredentialSerializer(serializer.Serializer):
     email = serializer.EmailField()
-    password = serializer.CharField()
+    password = serializer.CharField(min_length=8)
 
 
 class ImageSerializer(serializer.Serializer):

@@ -904,9 +904,6 @@
       }
     }
   }
-  .static {
-    position: static;
-  }
   .dropdown-end {
     --anchor-h: span-left;
     :where(.dropdown-content) {

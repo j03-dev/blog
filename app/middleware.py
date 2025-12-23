@@ -1,8 +1,8 @@
 import typing
-from oxapy import Redirect, Request
+from oxapy import Redirect, Request, Response
 from config import DB
 
-Next = typing.Callable[[Request, typing.Any], typing.Any]
+Next = typing.Callable[[Request, typing.Any], Response]
 
 
 def protect_page(request: Request, next: Next, **kwargs):
