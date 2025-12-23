@@ -17,7 +17,7 @@
         class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 text-base font-medium">
         <li><a hx-get="/" hx-target="#content-wrapper" hx-swap="outerHTML"
             class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition">Home</a></li>
-        <li><a class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition" hx-get="/"
+        <li><a class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition" hx-get="/about"
             hx-target="#content-wrapper" hx-swpa="outerHTML">About</a></li>
         {% if is_auth %}
         <li><a hx-get="/articles" hx-target="#content-wrapper" hx-swap="outerHTML"
