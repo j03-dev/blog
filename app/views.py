@@ -1,4 +1,4 @@
-from oxapy import Request, render, get, post, put, delete
+from oxapy import Request, Status, render, get, post, put, delete, catcher, Response
 
 from app.serializers import CredentialSerializer, ArticleSerializer
 from app import repositories as repo
@@ -53,7 +53,7 @@ def nav(req: Request):
     return render(req, "components/nav.html.j2", {"is_auth": is_auth})
 
 
-@get("/components/article-card/{article:int}")
+@get("/components/article-card/{article_id:int}")
 def card(req: Request, article_id: int):
     if article := repo.get_article_by_id(req.db, article_id):
         article_serializer = ArticleSerializer(instance=article)
@@ -102,3 +102,8 @@ def update_article(req: Request, article_id: int):
 def delete_article(req: Request, article_id: int):
     services.delete_article(req.db, article_id, req.user_id)
     return render(req, "article.html.j2")
+
+
+@catcher(Status.NOT_FOUND)
+def not_found_page(req: Request, _resp: Response):
+    return render(req, "not_found.html.j2")

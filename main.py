@@ -9,6 +9,7 @@ def main():
         HttpServer(("0.0.0.0", 8000))
         .session_store(SessionStore())
         .template(templating.Template(TEMPLATE_DIR))
+        .catchers([not_found_page])
         .attach(Router().route(static_file()))
         .attach(
             Router()
