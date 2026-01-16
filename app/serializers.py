@@ -39,6 +39,7 @@ class ArticleSerializer(serializer.Serializer):
 
     def create(self, session, validated_data):
         request = self.context.get("request")
+        assert request, "request is none, you forget pass context"
         validated_data = super().validate(validated_data)
         validated_data["author"] = request.user_id
         instance = super().create(session, validated_data)
