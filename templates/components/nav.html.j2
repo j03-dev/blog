@@ -18,7 +18,7 @@
         <li><a hx-get="/" hx-target="#content-wrapper" hx-swap="outerHTML"
             class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition">Home</a></li>
         <li><a class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition" hx-get="/about"
-            hx-target="#content-wrapper" hx-swpa="outerHTML">About</a></li>
+            hx-target="#content-wrapper" hx-swap="outerHTML">About</a></li>
         {% if is_auth %}
         <li><a hx-get="/articles" hx-target="#content-wrapper" hx-swap="outerHTML"
             class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition">New Article</a></li>
