@@ -1,11 +1,12 @@
+import time
 import typing
-from oxapy import Redirect, Request, Response
+
+
 from config import DB
+from oxapy import Redirect, Request, Response
 
-Next = typing.Callable[[Request, typing.Any], Response]
 
-
-def protect_page(request: Request, next: Next, **kwargs):
+def protect_page(request: Request, next, **kwargs):
     session = request.session
     is_auth = session.get("is_auth")
     user_id = session.get("user_id")
@@ -15,7 +16,7 @@ def protect_page(request: Request, next: Next, **kwargs):
     return Redirect("/login")
 
 
-def db_session(request: Request, next: Next, **kwargs):
+def db_session(request: Request, next, **kwargs):
     db = DB()
     try:
         request.db = db

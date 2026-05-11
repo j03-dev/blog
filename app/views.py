@@ -1,4 +1,15 @@
-from oxapy import Request, Status, render, get, post, put, delete, catcher, Response
+from oxapy import (
+    Request,
+    Redirect,
+    Status,
+    render,
+    get,
+    post,
+    put,
+    delete,
+    catcher,
+    Response,
+)
 
 from app.serializers import CredentialSerializer, ArticleSerializer
 from app import repositories as repo
@@ -24,19 +35,21 @@ def login_form(req: Request):
 
 @post("/login")
 def authenticate_user(req: Request):
-    cred = CredentialSerializer(req.data)
     try:
+        cred = CredentialSerializer(req.data)
         cred.is_valid()
     except Exception as e:
-        return render(req, "login.html.j2", {"message": str(e)})
+        return render(req, "components/alert.html.j2", {"error": str(e)})
     if user := services.login(req.db, cred):
         session = req.session
         session["user_id"] = user.id
         session["is_auth"] = True
-        articles = repo.get_all_articles(req.db)
-        article_serializer = ArticleSerializer(instance=articles, many=True)
-        return render(req, "index.html.j2", {"articles": article_serializer.data})
-    return render(req, "login.html.j2", {"message": "The Email or Password are False"})
+        response = Response("", content_type="text/plain")
+        response.insert_header("HX-Redirect", "/")
+        return response
+    return render(
+        req, "components/alert.html.j2", {"error": "The Email or Password are False"}
+    )
 
 
 @get("/logout")
@@ -51,14 +64,6 @@ def logout(req: Request):
 def nav(req: Request):
     is_auth = req.session.get("is_auth") or False
     return render(req, "components/nav.html.j2", {"is_auth": is_auth})
-
-
-@get("/components/article-card/{article_id:int}")
-def card(req: Request, article_id: int):
-    if article := repo.get_article_by_id(req.db, article_id):
-        article_serializer = ArticleSerializer(instance=article)
-        return render(req, "components/article_card.html.j2", {"article": article_serializer.data})
-    return render(req, "components/article_card.html.j2")
 
 
 @get("/articles")
@@ -79,7 +84,11 @@ def get_article(req: Request, article_id: int):
     is_auth = req.session.get("is_auth") or False
     if article := repo.get_article_by_id(req.db, article_id):
         article_serializer = ArticleSerializer(instance=article)
-        return render(req, "article.html.j2", {"article": article_serializer.data, "is_auth": is_auth})
+        return render(
+            req,
+            "article.html.j2",
+            {"article": article_serializer.data, "is_auth": is_auth},
+        )
     return render(req, "article.html.j2")
 
 

@@ -28,7 +28,7 @@ class Article(Base):
     title: Mapped[str] = mapped_column(nullable=False)
     content: Mapped[str] = mapped_column(Text(), nullable=False)
     author: Mapped[str] = mapped_column(ForeignKey("users.id"))
-    at: Mapped[str] = mapped_column(DateTime(), default=datetime.utcnow)
+    at: Mapped[str] = mapped_column(DateTime(), default=datetime.now)
 
     author_relationship: Mapped["User"] = relationship(
         back_populates="articles",
