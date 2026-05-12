@@ -12,10 +12,10 @@ TEMPLATE_DIR = "templates/**/*.j2"
 SECRET = getenv("SECRET")
 ENGINE = create_engine(
     "sqlite+libsql:///replicate.db",
-    # connect_args={
-    #     "auth_token": TURSO_AUTH_TOKEN,
-    #     "sync_url": TURSO_DATABASE_URL,
-    # },
+    connect_args={
+        "auth_token": TURSO_AUTH_TOKEN,
+        "sync_url": TURSO_DATABASE_URL,
+    },
 )
 
 DB = sessionmaker(bind=ENGINE)
