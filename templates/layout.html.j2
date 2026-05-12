@@ -12,9 +12,7 @@
 
 <body id="content-wrapper" class="bg-base-100 text-base-content">
   <div hx-get="/components/nav" hx-trigger="load"></div>
-  <main>
-    {% block content %}{% endblock %}
-  </main>
+  {% block content %}{% endblock %}
 </body>
 
 </html>
