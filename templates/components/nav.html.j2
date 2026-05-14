@@ -1,7 +1,7 @@
 <nav class="navbar bg-base-100 shadow-md font-sans px-6 border-b border-base-300">
   <div class="flex-1 navbar-start pr-10">
     <a hx-get="/" hx-target="#content-wrapper" hx-swap="outerHTML"
-      class="text-2xl font-extrabold tracking-wide text-primary hover:text-accent transition-all duration-200">
+      class="text-2xl font-extrabold tracking-wide text-primary hover:text-accent transition-all duration-200 cursor-pointer">
       Joe's Blog
     </a>
   </div>
@@ -51,7 +51,7 @@
         class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition">Home</li>
       <li hx-get="/about" hx-target="#content-wrapper" hx-swap="outerHTML" hx-push-url="true"
         class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition">About</li>
-      {% if is_auth %}
+      {% if session.is_auth %}
       <li hx-get="/articles" hx-target="#content-wrapper" hx-swap="outerHTML" hx-push-url="true"
         class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition">New Article</li>
       <li hx-get="/logout" hx-target="#content-wrapper" hx-swap="outerHTML"
