@@ -22,7 +22,6 @@ def main():
                     get_article,
                     home,
                     login_form,
-                    nav,
                 ]
             )
             .scope()

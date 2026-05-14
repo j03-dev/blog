@@ -10,9 +10,11 @@
   <script src="/static/js/json-enc.js"></script>
 </head>
 
-<body id="content-wrapper" class="bg-base-100 text-base-content">
-  <div hx-get="/components/nav" hx-trigger="load"></div>
-  {% block content %}{% endblock %}
+<body hx-history="true" class="bg-base-100 text-base-content">
+  <nav id="navbar" hx-swap-oob="true">{% include "components/nav.html.j2" %}</nav>
+  <main id="content-wrapper" class="bg-base-100 text-base-content">
+    {% block content %} {% endblock %}
+  </main>
 </body>
 
 </html>

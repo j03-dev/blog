@@ -19,10 +19,11 @@
           class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition">Home</li>
         <li class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition" hx-get="/about"
           hx-target="#content-wrapper" hx-swap="outerHTML">About</li>
-        {% if is_auth %}
+        {% if session.is_auth %}
         <li hx-get="/articles" hx-target="#content-wrapper" hx-swap="outerHTML" hx-push-url="true"
           class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition">New Article</li>
-        <li class="hover:bg-error hover:text-base-100 px-4 py-2 rounded-lg transition" href="/logout">Logout</li>
+        <li hx-get="/logout" hx-target="#content-wrapper" hx-swap="outerHTML"
+          class="hover:bg-error hover:text-base-100 px-4 py-2 rounded-lg transition">Logout</li>
         {% else %}
         <li hx-get="/login" hx-target="#content-wrapper" hx-swap="outerHTML" hx-push-url="true"
           class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition">Login</li>
@@ -53,7 +54,8 @@
       {% if is_auth %}
       <li hx-get="/articles" hx-target="#content-wrapper" hx-swap="outerHTML" hx-push-url="true"
         class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition">New Article</li>
-      <li class="hover:bg-error hover:text-base-100 px-4 py-2 rounded-lg transition" href="/logout">Logout</li>
+      <li hx-get="/logout" hx-target="#content-wrapper" hx-swap="outerHTML"
+        class="hover:bg-error hover:text-base-100 px-4 py-2 rounded-lg transition">Logout</li>
       {% else %}
       <li hx-get="/login" hx-target="#content-wrapper" hx-swap="outerHTML" hx-push-url="true"
         class="hover:bg-primary hover:text-base-100 px-4 py-2 rounded-lg transition">Login</li>

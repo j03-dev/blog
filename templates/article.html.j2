@@ -15,7 +15,7 @@
       {{ article.content|safe }}
     </div>
 
-    {% if is_auth %}
+    {% if session.is_auth %}
     <div class="flex flex-wrap items-center gap-4 mb-10">
       <a hx-get="/articles/{{ article.id }}/edit" hx-target="#content-wrapper" hx-swap="outerHTML"
         class="btn btn-outline btn-primary btn-sm">

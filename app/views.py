@@ -60,12 +60,6 @@ def logout(req: Request):
     return render(req, "index.html.j2", {"articles": article_serializer.data})
 
 
-@get("/components/nav")
-def nav(req: Request):
-    is_auth = req.session.get("is_auth") or False
-    return render(req, "components/nav.html.j2", {"is_auth": is_auth})
-
-
 @get("/articles")
 def article_form(req):
     return render(req, "article_form.html.j2")
@@ -81,13 +75,12 @@ def create_article(req: Request):
 
 @get("/articles/{article_id:int}")
 def get_article(req: Request, article_id: int):
-    is_auth = req.session.get("is_auth") or False
     if article := repo.get_article_by_id(req.db, article_id):
         article_serializer = ArticleSerializer(instance=article)
         return render(
             req,
             "article.html.j2",
-            {"article": article_serializer.data, "is_auth": is_auth},
+            {"article": article_serializer.data},
         )
     return render(req, "article.html.j2")
 
