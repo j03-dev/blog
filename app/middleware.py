@@ -1,9 +1,5 @@
-import time
-import typing
-
-
 from config import DB
-from oxapy import Redirect, Request, Response
+from oxapy import Redirect, Request
 
 
 def protect_page(request: Request, next, **kwargs):

@@ -1869,6 +1869,9 @@
       rotate: calc(45deg * -1);
     }
   }
+  .cursor-pointer {
+    cursor: pointer;
+  }
   .flex-wrap {
     flex-wrap: wrap;
   }

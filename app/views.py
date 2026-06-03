@@ -1,6 +1,5 @@
 from oxapy import (
     Request,
-    Redirect,
     Status,
     render,
     get,
@@ -48,7 +47,9 @@ def authenticate_user(req: Request):
         response.insert_header("HX-Redirect", "/")
         return response
     return render(
-        req, "components/alert.html.j2", {"error": "The Email or Password are False"}
+        req,
+        "components/alert.html.j2",
+        {"error": "The Email or Password are False"},
     )
 
 
@@ -61,7 +62,7 @@ def logout(req: Request):
 
 
 @get("/articles")
-def article_form(req):
+def article_form(req: Request):
     return render(req, "article_form.html.j2")
 
 
@@ -86,10 +87,14 @@ def get_article(req: Request, article_id: int):
 
 
 @get("/articles/{article_id:int}/edit")
-def edit_form_article(req, article_id: int):
+def edit_form_article(req: Request, article_id: int):
     article = repo.get_article_by_id(req.db, article_id)
     article_serializer = ArticleSerializer(instance=article)
-    return render(req, "article_form.html.j2", {"article": article_serializer.data})
+    return render(
+        req,
+        "article_form.html.j2",
+        {"article": article_serializer.data},
+    )
 
 
 @put("/articles/{article_id:int}")

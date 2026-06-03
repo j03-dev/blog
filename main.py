@@ -1,5 +1,5 @@
 from oxapy import HttpServer, Session, Router, templating, static_file
-from app.views import *
+from app import views
 from app.middleware import db_session, protect_page
 from config import TEMPLATE_DIR, SECRET
 
@@ -9,7 +9,7 @@ def main():
     (
         HttpServer(("0.0.0.0", 8000))
         .template(templating.Template(TEMPLATE_DIR))
-        .catchers([not_found_page])
+        .catchers([views.not_found_page])
         .attach(Router().route(static_file()))
         .attach(
             Router()
@@ -17,11 +17,11 @@ def main():
             .middleware(db_session)
             .routes(
                 [
-                    about,
-                    authenticate_user,
-                    get_article,
-                    home,
-                    login_form,
+                    views.about,
+                    views.authenticate_user,
+                    views.get_article,
+                    views.home,
+                    views.login_form,
                 ]
             )
             .scope()
@@ -30,12 +30,12 @@ def main():
             .middleware(protect_page)
             .routes(
                 [
-                    article_form,
-                    create_article,
-                    delete_article,
-                    edit_form_article,
-                    logout,
-                    update_article,
+                    views.article_form,
+                    views.create_article,
+                    views.delete_article,
+                    views.edit_form_article,
+                    views.logout,
+                    views.update_article,
                 ]
             )
         )
